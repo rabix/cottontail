@@ -10,7 +10,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var express = require('express');
 var mongoose = require('mongoose');
 var config = require('./config/environment');
-var errorHandler = require('errorhandler');
+var winston = require('./components/logger');
 
 
 // Connect to database
@@ -42,8 +42,20 @@ server.listen(config.port, config.ip, function () {
     console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
 });
 
-// handle errors
-app.use(errorHandler()); // Error handler has to be last
+/**
+ * All errors are intercepted here and formated
+ */
+app.use(function (err, req, res, next) {
+
+    console.error('Caught err: ', err);
+    winston.error({route: req.url || req.originalRoute, status: err.status || 500, error: err.body, message: err.message || 'Request parse error'});
+
+    var error = { message: err.message, stack: err.stack };
+    for (var prop in err) error[prop] = err[prop];
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(err.status || 500).json({error: error});
+});
 
 // Expose app
 exports = module.exports = app;

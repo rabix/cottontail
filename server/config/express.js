@@ -18,6 +18,7 @@ var passport = require('passport');
 var session = require('express-session');
 var mongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
+var winston = require('../components/logger');
 
 module.exports = function (app) {
     var env = app.get('env');
@@ -56,8 +57,15 @@ module.exports = function (app) {
         app.use(express.static(path.join(config.root, '.tmp')));
         app.use(express.static(path.join(config.root, 'client')));
         app.set('appPath', path.join(config.root, 'client'));
-        app.use(morgan('dev'));
-
     }
+
+    app.use(morgan({
+        format: 'dev',
+        'stream': {
+            write: function (str) {
+                winston.info(str);
+            }
+        }
+    }));
 
 };

@@ -26,6 +26,10 @@ var all = {
     // Server IP
     ip: process.env.IP || '0.0.0.0',
 
+    logging: {
+        path: '/data/log/cottontail'
+    },
+
     // Should we populate the DB with sample data?
     seedDB: false,
 
