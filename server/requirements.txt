@@ -1,5 +1,0 @@
-Flask
-Flask-MongoKit
-python-social-auth
-flask-login
-six

@@ -1,0 +1,60 @@
+{
+  "name": "cottontail",
+  "version": "0.0.1",
+  "main": "app.js",
+  "dependencies": {
+    "express": "~4.9.0",
+    "morgan": "~1.0.0",
+    "body-parser": "~1.5.0",
+    "method-override": "~1.0.0",
+    "serve-favicon": "~2.0.1",
+    "cookie-parser": "~1.0.1",
+    "express-session": "~1.0.2",
+    "errorhandler": "~1.0.0",
+    "compression": "~1.0.1",
+    "lodash": "~2.4.1",
+    "ejs": "~0.8.4",
+    "mongoose": "~4.0.3",
+    "jsonwebtoken": "^5.0.0",
+    "express-jwt": "^3.0.0",
+    "passport": "~0.2.0",
+    "passport-local": "~0.1.6",
+    "passport-facebook": "latest",
+    "passport-twitter": "latest",
+    "passport-google-oauth": "latest",
+    "composable-middleware": "^0.3.0",
+    "connect-mongo": "^0.8.1",
+    "socket.io": "^1.0.6",
+    "socket.io-client": "^1.0.6",
+    "socketio-jwt": "^3.0.0"
+  },
+  "devDependencies": {
+    "open": "~0.0.4",
+    "jshint-stylish": "~0.1.5",
+    "connect-livereload": "~0.4.0",
+    "karma-ng-scenario": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.3",
+    "karma-script-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-ng-jade2js-preprocessor": "^0.1.2",
+    "karma-jasmine": "~0.1.5",
+    "karma-chrome-launcher": "~0.1.3",
+    "requirejs": "~2.1.11",
+    "karma-requirejs": "~0.2.1",
+    "karma-coffee-preprocessor": "~0.2.1",
+    "karma-jade-preprocessor": "0.0.11",
+    "karma-phantomjs-launcher": "~0.1.4",
+    "karma": "~0.12.9",
+    "karma-ng-html2js-preprocessor": "~0.1.0",
+    "supertest": "~0.11.0",
+    "should": "~3.3.1"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "test": ""
+  },
+  "private": true
+}
