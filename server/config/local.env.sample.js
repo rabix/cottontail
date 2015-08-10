@@ -20,6 +20,7 @@ module.exports = {
 
     GITHUB_ID: 'app-id',
     GITHUB_SECRET: 'secret',
+    GUTHUB_SCOPE: 'user',
 
     // Control debug level for modules using visionmedia/debug
     DEBUG: ''

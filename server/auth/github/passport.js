@@ -3,12 +3,23 @@ var GithubStrategy = require('passport-github').Strategy;
 
 exports.setup = function (User, config) {
 
+    passport.serializeUser(function(user, done) {
+        done(null, user);
+    });
+
+    passport.deserializeUser(function(obj, done) {
+        done(null, obj);
+    });
+
+
     passport.use(new GithubStrategy({
             clientID: config.github.clientID,
             clientSecret: config.github.clientSecret,
-            callbackURL: config.github.callbackURL
+            callbackURL: config.github.callbackURL,
+            scope: config.github.scope
         },
         function (accessToken, refreshToken, profile, done) {
+
             User.findOne({
                     'github.id': profile.id
                 },
@@ -23,8 +34,8 @@ exports.setup = function (User, config) {
                             email: profile.emails[0].value,
                             role: 'user',
                             username: profile.username,
-                            provider: 'facebook',
-                            facebook: profile._json
+                            provider: 'github',
+                            github: profile._json
                         });
                         user.save(function (err) {
                             if (err) return done(err);

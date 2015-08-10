@@ -71,7 +71,8 @@ var all = {
     github: {
         clientID: process.env.GITHUB_ID || 'id',
         clientSecret: process.env.GITHUB_SECRET || 'secret',
-        callbackURL: (process.env.DOMAIN || '') + '/auth/github/callback'
+        callbackURL: (process.env.DOMAIN || '') + '/auth/github/callback',
+        scope: process.env.GUTHUB_SCOPE || ''
     }
 };
 

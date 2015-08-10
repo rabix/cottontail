@@ -7,6 +7,14 @@
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
+var _ = require('lodash');
+var _conf = require('./config/local.env') || {};
+
+// add env variables from local config
+_.forEach(_conf, function (val,key) {
+    process.env[key] = val;
+});
+
 var express = require('express');
 var mongoose = require('mongoose');
 var config = require('./config/environment');
@@ -33,7 +41,7 @@ var socketio = require('socket.io')(server, {
     path: '/socket.io-client'
 });
 
-require('./config/socketio')(socketio);
+//require('./config/socketio')(socketio);
 require('./config/express')(app);
 require('./routes')(app);
 
