@@ -11,11 +11,6 @@ router
 
     .get('/callback', passport.authenticate('github', {
             failureRedirect: '/'
-        }),
-        function (req, res, next) {
-
-
-            auth.setTokenCookie(req, res, next);
-        });
+        }), auth.setTokenCookie);
 
 module.exports = router;
