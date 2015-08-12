@@ -59,7 +59,6 @@ module.exports = function (app) {
         app.use(favicon(path.join(config.root, config.clientPath, 'favicon.ico')));
         app.use(express.static(path.join(config.root, config.clientPath)));
         app.set('appPath', path.join(config.root, config.clientPath));
-        app.use(morgan('dev'));
     }
 
     if ('development' === env || 'test' === env) {
@@ -67,9 +66,7 @@ module.exports = function (app) {
 
         app.use(express.static(path.join(config.root, 'client/.tmp/serve')));
         app.use(express.static(path.join(config.root, 'client/src')));
-
         app.use('/bower_components', express.static(path.join(config.root, 'client/bower_components')));
-
         app.set('appPath', path.join(config.root, 'client'));
     }
 

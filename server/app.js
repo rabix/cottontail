@@ -8,10 +8,19 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var _ = require('lodash');
-var _conf = require('./config/local.env') || {};
+var minimist = require('minimist');
+// dont nees first two args since they are node and app.js
+var args = minimist(process.argv.slice(2));
+
+var configFile = _.find(args, function (value, arg) {
+    return arg === 'c' || arg === 'config';
+});
+
+var _confPath = configFile || './config/local.env';
+var _conf = require(_confPath) || {};
 
 // add env variables from local config
-_.forEach(_conf, function (val,key) {
+_.forEach(_conf, function (val, key) {
     process.env[key] = val;
 });
 
@@ -56,9 +65,14 @@ server.listen(config.port, config.ip, function () {
 app.use(function (err, req, res, next) {
 
     console.error('Caught err: ', err);
-    winston.error({route: req.url || req.originalRoute, status: err.status || 500, error: err.body, message: err.message || 'Request parse error'});
+    winston.error({
+        route: req.url || req.originalRoute,
+        status: err.status || 500,
+        error: err.body,
+        message: err.message || 'Request parse error'
+    });
 
-    var error = { message: err.message, stack: err.stack };
+    var error = {message: err.message, stack: err.stack};
     for (var prop in err) error[prop] = err[prop];
 
     res.setHeader('Content-Type', 'application/json');

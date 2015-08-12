@@ -3,6 +3,9 @@
 // Production specific configuration
 // =================================
 module.exports = {
+
+    clientPath: 'dist',
+
     // Server IP
     ip: process.env.OPENSHIFT_NODEJS_IP || process.env.IP || undefined,
 
