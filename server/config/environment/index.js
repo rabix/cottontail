@@ -28,6 +28,10 @@ var all = {
         path: '/data/log/cottontail'
     },
 
+    store: {
+        path: process.env.STORE_PATH || '/data/cottontail/fs/'
+    },
+
     // Should we populate the DB with sample data?
     seedDB: false,
 
