@@ -56,7 +56,8 @@ exports.createWorkspace = function (req, res) {
 
     console.log(getUser(req.user) + name);
     
-    Store.createWorkspace(getUser(req.user) + name).then(function () {
+    Store.createWorkspace(getUser(req.user) + name).then(function (ws) {
+        console.log(ws);
 
         return res.json({
             message: 'Workspace successfully created.'
