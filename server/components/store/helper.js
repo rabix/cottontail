@@ -4,7 +4,7 @@
 
 var fs = require('fs');
 var path = require('path');
-var Q = require('Q');
+var Q = require('q');
 var mkdirp = require('mkdirp');
 var dir = require('node-dir');
 

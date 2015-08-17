@@ -4,7 +4,7 @@
 var helper = require('./helper');
 var config = require('../../config/environment');
 var dir = config.store.path;
-var Q = require('Q');
+var Q = require('q');
 
 if (dir.charAt(dir.length - 1) !== '/') {
     dir = dir + '/';
