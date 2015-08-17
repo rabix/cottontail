@@ -6,7 +6,7 @@ var Store = require('../../components/store');
 var getUser = function (user) {
 
     if (user.provider === 'local') {
-        return user.name;
+        return user.name + '/';
     }
 
     return user[user.provider].login + '/';
@@ -54,6 +54,8 @@ exports.getFilesInWorkspace = function (req, res) {
 exports.createWorkspace = function (req, res) {
     var name = req.params.workspace;
 
+    console.log(getUser(req.user) + name);
+    
     Store.createWorkspace(getUser(req.user) + name).then(function () {
 
         return res.json({
