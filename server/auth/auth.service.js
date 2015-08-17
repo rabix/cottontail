@@ -7,6 +7,7 @@ var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var compose = require('composable-middleware');
 var User = require('../api/user/user.model');
+var Store = require('../components/store');
 var validateJwt = expressJwt({
     secret: config.secrets.session
 });
@@ -19,8 +20,7 @@ function isAuthenticated() {
     return compose()
         // Validate jwt
         .use(function (req, res, next) {
-            console.log(req.isAuthenticated());
-            
+
             // allow access_token to be passed through query parameter as well
             if (req.query && req.query.hasOwnProperty('access_token')) {
                 req.headers.authorization = 'Bearer ' + req.query.access_token;
@@ -63,7 +63,7 @@ function hasRole(roleRequired) {
  * Returns a jwt token signed by the app secret
  */
 function signToken(id) {
-    return jwt.sign({_id: id}, config.secrets.session, {expiresInMinutes: 60 * 5});
+    return jwt.sign({_id: id}, config.secrets.session, {expiresInMinutes: 3600 * 5});
 }
 
 /**
@@ -76,6 +76,32 @@ function setTokenCookie(req, res) {
     res.redirect('/');
 }
 
+
+var getUser = function (user) {
+
+    if (user.provider === 'local') {
+        return user.name;
+    }
+
+    return user[user.provider].login + '/';
+};
+
+function postLogin(req) {
+    var dir = config.store.path;
+
+    if (dir.charAt(dir.length - 1) !== '/') {
+        dir = dir + '/';
+    }
+    console.log(req.user);
+    
+    Store.fs.mkdir(dir + getUser(req.user)).then(function () {
+        console.log('Created user dir.');
+    }, function () {
+        console.log('User dir already set.');
+    });
+}
+
+exports.postLogin = postLogin;
 exports.isAuthenticated = isAuthenticated;
 exports.hasRole = hasRole;
 exports.signToken = signToken;

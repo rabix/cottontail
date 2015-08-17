@@ -10,7 +10,12 @@ router
     .get('/', passport.authenticate('github'))
 
     .get('/callback', passport.authenticate('github', {
-            failureRedirect: '/'
-        }), auth.setTokenCookie);
+        failureRedirect: '/'
+    }), function (req, res, next) {
+
+        auth.setTokenCookie(req, res, next);
+        auth.postLogin(req);
+
+    });
 
 module.exports = router;

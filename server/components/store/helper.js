@@ -4,7 +4,7 @@
 
 var fs = require('fs');
 var path = require('path');
-var Q = require('q');
+var Q = require('Q');
 var mkdirp = require('mkdirp');
 var dir = require('node-dir');
 
@@ -96,8 +96,6 @@ module.exports = {
                 .then(function () {
                     deferred.reject('Workspace already exists.');
                 }, function () {
-                    
-                    console.log('sjiaojsiaj');
                     
                     //doesnt exist
                     mkdirp(path, function (err) {
