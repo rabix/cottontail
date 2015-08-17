@@ -8,22 +8,8 @@
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var _ = require('lodash');
-var minimist = require('minimist');
-// dont nees first two args since they are node and app.js
-var args = minimist(process.argv.slice(2));
 
-var configFile = _.find(args, function (value, arg) {
-    return arg === 'c' || arg === 'config';
-});
-
-var _confPath = configFile || './config/local.env';
-var _conf = require(_confPath) || {};
-
-// add env variables from local config
-_.forEach(_conf, function (val, key) {
-    process.env[key] = val;
-});
-
+var Store = require('./components/store');
 var express = require('express');
 var mongoose = require('mongoose');
 var config = require('./config/environment');
@@ -40,6 +26,21 @@ mongoose.connection.on('error', function (err) {
 // Populate DB with sample data
 if (config.seedDB) {
     require('./config/seed');
+}
+
+if (config.strategy === 'local') {
+    var dir = config.store.path;
+
+    if (dir.charAt(dir.length - 1) !== '/') {
+        dir = dir + '/';
+    }
+
+    Store.fs.mkdir(dir + 'local/').then(function () {
+        Logger.info('User dir created.');
+    }, function () {
+        Logger.info('User dir already set.');
+    });
+
 }
 
 // Setup server

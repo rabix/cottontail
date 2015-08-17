@@ -22,6 +22,8 @@ module.exports = {
     GITHUB_SECRET: 'secret',
     GUTHUB_SCOPE: 'user',
 
+
+    STRATEGY: 'local',
     // Control debug level for modules using visionmedia/debug
     DEBUG: ''
 };

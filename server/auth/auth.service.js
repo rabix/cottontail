@@ -8,6 +8,7 @@ var expressJwt = require('express-jwt');
 var compose = require('composable-middleware');
 var User = require('../api/user/user.model');
 var Store = require('../components/store');
+var Logger = require('../components/logger');
 var validateJwt = expressJwt({
     secret: config.secrets.session
 });
@@ -21,23 +22,39 @@ function isAuthenticated() {
         // Validate jwt
         .use(function (req, res, next) {
 
-            // allow access_token to be passed through query parameter as well
-            if (req.query && req.query.hasOwnProperty('access_token')) {
-                req.headers.authorization = 'Bearer ' + req.query.access_token;
-            }
+            if (config.strategy === 'local') {
+                next();
+            } else {
+                // allow access_token to be passed through query parameter as well
+                if (req.query && req.query.hasOwnProperty('access_token')) {
+                    req.headers.authorization = 'Bearer ' + req.query.access_token;
+                }
 
-            validateJwt(req, res, next);
+                validateJwt(req, res, next);
+
+            }
         })
         // Attach user to request
         .use(function (req, res, next) {
 
-            User.findById(req.user._id, function (err, user) {
-                if (err) return next(err);
-                if (!user) return res.status(401).json({message: 'Unauthorized'});
+            if (config.strategy === 'local') {
 
-                req.user = user;
+                req.user = {
+                    provider: 'local',
+                    name: 'local'
+                };
+
                 next();
-            });
+            } else {
+                User.findById(req.user._id, function (err, user) {
+                    if (err) return next(err);
+                    if (!user) return res.status(401).json({message: 'Unauthorized'});
+
+                    req.user = user;
+                    next();
+                });
+
+            }
         });
 }
 
@@ -92,13 +109,13 @@ function postLogin(req) {
     if (dir.charAt(dir.length - 1) !== '/') {
         dir = dir + '/';
     }
-    console.log(req.user);
-    
+
     Store.fs.mkdir(dir + getUser(req.user)).then(function () {
-        console.log('Created user dir.');
+        Logger.info('User dir created.');
     }, function () {
-        console.log('User dir already set.');
+        Logger.info('User dir already set.');
     });
+
 }
 
 exports.postLogin = postLogin;
