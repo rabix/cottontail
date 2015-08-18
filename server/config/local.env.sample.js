@@ -20,7 +20,7 @@ module.exports = {
 
     GITHUB_ID: 'app-id',
     GITHUB_SECRET: 'secret',
-    GUTHUB_SCOPE: 'user',
+    GITHUB_SCOPE: 'user',
 
 
     STRATEGY: 'local',
