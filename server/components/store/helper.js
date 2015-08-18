@@ -50,13 +50,21 @@ module.exports = {
         return deferred.promise;
     },
 
-    readWorkspace: function (path) {
+    readWorkspace: function (dirPath) {
         var deferred = Q.defer();
 
-        this.checkExsits(path)
+        this.checkExsits(dirPath)
             .then(function () {
-                dir.files(path, function(err, files) {
+                dir.files(dirPath, function(err, files) {
                     if (err) return deferred.reject(err);
+
+                    files = files.map(function(file) {
+                        return {
+                            path: file,
+                            type: path.extname(file),
+                            name: path.basename(file)
+                        }
+                    });
 
                     deferred.resolve(files);
                 });
@@ -76,7 +84,6 @@ module.exports = {
             .then(function () {
                 fs.readdir(path, function(err, files) {
                     if (err) return deferred.reject(err);
-
                     deferred.resolve(files);
                 });
             })
@@ -127,7 +134,11 @@ module.exports = {
                     deferred.reject(err);
                 }
 
-                deferred.resolve(true);
+                deferred.resolve({
+                    name: fileName,
+                    type: path.extname(fileName),
+                    content: content || ''
+                });
             });
 
         }
@@ -145,7 +156,10 @@ module.exports = {
                 deferred.reject(err);
             }
 
-            deferred.resolve(true);
+            deferred.resolve({
+                name: fileName,
+                type: path.extname(fileName)
+            });
         });
 
         return deferred.promise;
