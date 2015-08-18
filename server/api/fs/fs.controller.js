@@ -15,7 +15,6 @@ var getUser = function (user) {
 exports.index = function (req, res) {
 
     Store.getWorkspaces(getUser(req.user)).then(function (workspaces) {
-
         return res.json({
             workspaces: workspaces
         });
@@ -89,7 +88,8 @@ exports.createFile = function (req, res) {
     Store.createFile(getUser(req.user) + workspace, file).then(function (file) {
 
         return res.json({
-            message: 'File created successfully.'
+            message: 'File created successfully.',
+            content: file
         });
     }).catch(function (err) {
         handleError(res, err);
