@@ -60,7 +60,6 @@ module.exports = {
 
                     files = files.map(function(file) {
                         return {
-                            path: file,
                             type: path.extname(file),
                             name: path.basename(file)
                         }
@@ -156,10 +155,7 @@ module.exports = {
                 deferred.reject(err);
             }
 
-            deferred.resolve({
-                name: fileName,
-                type: path.extname(fileName)
-            });
+            deferred.resolve(true);
         });
 
         return deferred.promise;
