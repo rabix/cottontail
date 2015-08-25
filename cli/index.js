@@ -15,7 +15,6 @@ var chalk = require('chalk');
 var info = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/../package.json')).toString());
 
 var parseOptions = function (options) {
-    //console.log('Options', options);
 
     process.env.NODE_INTERPRETER = options.nodeInterpreter || 'node';
     process.env.BASE_DIR = options.baseDir || 'node';
@@ -41,7 +40,7 @@ program
     .command('run')
     .description('Run Cottontail web app.')
     .action(function (options) {
-        parseOptions(options);
+        parseOptions(options.parent);
         spawn.start();
     });
 
@@ -73,6 +72,8 @@ var commands = {
 
     close: function () {
         console.log(chalk.green.italic('> Closing process.'));
+        this.stop();
+        process.exit(0);
     },
 
     rs: function () {
