@@ -13,7 +13,7 @@ var configFile = _.find(args, function (value, arg) {
 var _confPath = configFile || '../local.env';
 var _conf = require(_confPath) || {};
 
-_.extend(process.env, _conf);
+_.assign(process.env, _conf);
 
 function requiredProcessEnv(name) {
     if (!process.env[name]) {
