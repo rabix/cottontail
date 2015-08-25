@@ -8,15 +8,17 @@ var exec = require('child_process').exec;
 module.exports = {
 
     start: function () {
-        var nodeInterpreter = process.env.NODE_INTERPRETER || 'node';
-        var baseDir = '../server/';
-        
-        if (process.env.BASE_DIR) {
-            process.chdir(process.env.BASE_DIR);
-            baseDir = '';
+
+        if (this.child) {
+            logger.error('Server allready running.');
+            return false;
         }
-        
-        var child = exec(nodeInterpreter + ' ' + baseDir + 'app.js');
+
+        var nodeInterpreter = process.env.NODE_INTERPRETER || 'node';
+
+        process.chdir(__dirname + '/../../server');
+
+        var child = exec(nodeInterpreter + ' app.js');
 
         child.stdout.on('data', function(data) {
             logger.info(data);
@@ -27,7 +29,7 @@ module.exports = {
         });
 
         child.on('close', function(code) {
-            logger.info('Stopping Cottontail: ' + code);
+            logger.info('Stopping Cottontail: [Status code] ' + code);
         });
 
         this.child = child;
@@ -36,8 +38,14 @@ module.exports = {
     stop: function () {
         if (this.child && typeof this.child.kill === 'function') {
             this.child.kill();
+            this.child = null;
         } else {
             logger.warn('There is no child process running.')
         }
+    },
+
+    restart: function () {
+        this.stop();
+        this.start();
     }
 };

@@ -1,12 +1,14 @@
 {
   "name": "cottontail",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "cli/index.js",
   "bin": {
     "cottontail": "cli/index.js"
   },
   "dependencies": {
     "body-parser": "~1.5.0",
+    "chalk": "^1.1.1",
+    "commander": "^2.8.1",
     "composable-middleware": "^0.3.0",
     "compression": "~1.0.1",
     "connect-mongo": "^0.8.1",
@@ -66,7 +68,8 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "start": "node app.js",
+    "postinstall": "sh setup-client.sh",
+    "start": "node server/app.js",
     "test": ""
   },
   "private": true
