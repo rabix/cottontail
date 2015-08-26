@@ -30,6 +30,8 @@ var all = {
     // cottontail instance strategy
     strategy: process.env.STRATEGY || 'git',
 
+    debug: process.env.DEBUG || true,
+
     // Root path of server
     root: path.normalize(__dirname + '/../../..'),
 

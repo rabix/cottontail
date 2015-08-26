@@ -26,5 +26,6 @@ module.exports = {
 
     STRATEGY: 'local',
     // Control debug level for modules using visionmedia/debug
-    DEBUG: ''
+    DEBUG_LEVEL: '',
+    DEBUG: true
 };
