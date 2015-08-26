@@ -4,7 +4,7 @@
 // =================================
 module.exports = {
 
-    clientPath: 'dist',
+    clientPath: 'client/dist',
 
     // Server IP
     ip: process.env.OPENSHIFT_NODEJS_IP || process.env.IP || undefined,
