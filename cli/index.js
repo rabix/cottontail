@@ -11,6 +11,7 @@ var spawn = require('./spawn');
 var prompt = require('./prompt');
 var fs = require('fs');
 var chalk = require('chalk');
+var logger = require('../server/components/logger');
 
 var info = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/../package.json')).toString());
 
@@ -41,6 +42,9 @@ program
     .description('Run Cottontail web app.')
     .action(function (options) {
         parseOptions(options.parent);
+        logger.info('Starting Cottontail..');
+        logger.info('Available commands: ');
+        logger.info('start, stop, end(alias: close), restart (alias: rs) \n');
         spawn.start();
     });
 
@@ -76,11 +80,19 @@ var commands = {
         process.exit(0);
     },
 
+    end: function () {
+        return this.close();
+    },
+
     rs: function () {
         return this.restart();
     }
+
 };
 
+// Accept user input after commands run
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
 process.stdin.on('data', function (data) {
     data = (data + '').trim().toLowerCase();
 

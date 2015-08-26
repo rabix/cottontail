@@ -16,12 +16,13 @@ module.exports = {
 
         var nodeInterpreter = process.env.NODE_INTERPRETER || 'node';
         
-        
-        console.log(nodeInterpreter);
-        
         process.chdir(__dirname + '/../../server');
 
-        var child = exec(nodeInterpreter + ' app.js');
+        var child = exec(nodeInterpreter + ' app.js', {
+            env: {
+                NEST_CARSKI: true
+            }
+        });
 
         child.stdout.on('data', function(data) {
             logger.info(data);
