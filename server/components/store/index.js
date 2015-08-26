@@ -35,6 +35,6 @@ module.exports = {
     },
 
     writeFile: function (workspace, file, content) {
-        this.fs.overwrite(dir + workspace + '/' + file, content);
+        return this.fs.overwrite(dir + workspace + '/' + file, content);
     }
 };

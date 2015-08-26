@@ -4,14 +4,14 @@
 
 var fs = require('fs');
 var path = require('path');
-var Q = require('Q');
+var q = require('q');
 var mkdirp = require('mkdirp');
 var dir = require('node-dir');
 
 module.exports = {
 
     checkExsits: function (path) {
-        var deferred = Q.defer();
+        var deferred = q.defer();
 
         if (typeof path === 'string' ) {
             fs.exists(path, function (exists) {
@@ -29,18 +29,18 @@ module.exports = {
     },
 
     readFile: function (path) {
-        var deferred = Q.defer();
+        var deferred = q.defer();
 
         this.checkExsits(path)
             .then(function () {
-                fs.readFile(path, function (err, file) {
+                fs.readFile(path, "utf-8", function (err, file) {
 
                     if(err) {
                         console.log(err);
                         deferred.reject(err);
                     }
 
-                    deferred.resolve(file.toString());
+                    deferred.resolve(file);
                 });
             })
             .catch(function (err) {
@@ -51,7 +51,7 @@ module.exports = {
     },
 
     readWorkspace: function (dirPath) {
-        var deferred = Q.defer();
+        var deferred = q.defer();
 
         this.checkExsits(dirPath)
             .then(function () {
@@ -77,7 +77,7 @@ module.exports = {
     },
 
     readDir: function (path) {
-        var deferred = Q.defer();
+        var deferred = q.defer();
 
         this.checkExsits(path)
             .then(function () {
@@ -94,7 +94,7 @@ module.exports = {
     },
 
     mkdir: function (path) {
-        var deferred = Q.defer();
+        var deferred = q.defer();
 
         if (typeof path === 'string' ) {
 
@@ -123,7 +123,7 @@ module.exports = {
     },
 
     createFile: function (fileName, content) {
-        var deferred = Q.defer();
+        var deferred = q.defer();
 
         if (fileName) {
 
@@ -146,7 +146,7 @@ module.exports = {
     },
 
     truncate: function (fileName) {
-        var deferred = Q.defer();
+        var deferred = q.defer();
 
         fs.truncate(fileName, 0, function(err){
 
@@ -162,7 +162,7 @@ module.exports = {
     },
 
     overwrite: function (fileName, content) {
-        var deferred = Q.defer();
+        var deferred = q.defer();
         var _self = this;
 
         this.truncate(fileName)

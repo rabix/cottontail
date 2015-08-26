@@ -27,10 +27,10 @@ exports.getFile = function (req, res) {
     var workspace = req.params.workspace;
     var file = req.params.file;
 
-    Store.getFile(getUser(req.user) + workspace, file).then(function (file) {
-
+    Store.getFile(getUser(req.user) + workspace, file).then(function (data) {
+	    
         return res.json({
-            file: file
+            content: data
         });
     }).catch(function (err) {
         handleError(res, err);
@@ -70,7 +70,7 @@ exports.updateFile = function (req, res) {
     var workspace = req.params.workspace;
     var file = req.params.file;
 
-    Store.writeFile(getUser(req.user) + workspace, file, req.body.file).then(function (file) {
+    Store.writeFile(getUser(req.user) + workspace, file, req.body.content).then(function (file) {
 
         return res.json({
             message: 'File updated successfully.',
