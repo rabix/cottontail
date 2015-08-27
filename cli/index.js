@@ -9,10 +9,12 @@ var path = require('path');
 var program = require('commander');
 var spawn = require('./spawn');
 var prompt = require('./prompt');
-var fs = require('fs');
+var fs = require('fs-extra');
 var chalk = require('chalk');
 var logger = require('../server/components/logger');
 var config = require('./config');
+
+var cottontailRoot = __dirname + '/../';
 
 var info = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/../package.json')).toString());
 
@@ -28,75 +30,106 @@ var parseOptions = function (options) {
     
 };
 
+var getQuestions = function () {
+    return [
+        {
+            name: 'NODE_ENV',
+            message: 'Set node env:',
+            default: 'production'
+        },
+        {
+            name: 'GITHUB',
+            message: 'Enable Github auth',
+            default: false,
+            type: 'confirm'
+        },
+        {
+            when: function (props) {
+                return props.GITHUB;
+            },
+            name: 'GITHUB_ID',
+            message: 'Github id:'
+        },
+        {
+            when: function (props) {
+                return props.GITHUB;
+            },
+            name: 'GITHUB_SECRET',
+            message: 'Github secret:'
+        },
+        {
+            when: function (props) {
+                return props.GITHUB;
+            },
+            name: 'GITHUB_SCOPE',
+            message: 'Github scope:'
+        },
+        {
+            name: 'STRATEGY',
+            message: 'Set cottontail strategy: ',
+            type: 'list',
+            choices: ['local', 'git', 'mongo']
+        },
+        {
+            name: 'DEBUG',
+            message: 'Output debug into console?',
+            type: 'confirm',
+            default: true
+        },
+        {
+            when: function (props) {
+                return props.DEBUG;
+            },
+            name: 'DEBUG_LEVEL',
+            message: 'Set debug level',
+            type: 'list',
+            choices: ['all', 'debug', 'error', 'info', 'warn']
+        }
+    ];
+};
+
+var promptUser = function (callback) {
+
+    prompt(getQuestions(), function (answers) {
+        config.create(answers, cottontailRoot, callback || function () {});
+    });
+
+};
+
+var runCottontail = function () {
+
+    console.log('Starting Cottontail..');
+    console.log('Available commands: ');
+    console.log('start, stop, end(alias: close), restart (alias: rs) \n');
+
+    spawn.start();
+
+};
+
 program
     .version(info.version || '0.0.1')
     // Setup
     .command('setup')
     .description('Configure Cottontail.')
     .action(function (options) {
+        var configFile = options.parent.config;
+
         console.log(chalk.green.italic('Running Cottontail setup.'));
 
-        var questions = [
-            {
-                name: 'NODE_ENV',
-                message: 'Set node env:',
-                default: 'production'
-            },
-            {
-                name: 'GITHUB',
-                message: 'Enable Github auth',
-                default: false,
-                type: 'confirm'
-            },
-            {
-                when: function (props) {
-                    return props.GITHUB;
-                },
-                name: 'GITHUB_ID',
-                message: 'Github id:'
-            },
-            {
-                when: function (props) {
-                    return props.GITHUB;
-                },
-                name: 'GITHUB_SECRET',
-                message: 'Github secret:'
-            },
-            {
-                when: function (props) {
-                    return props.GITHUB;
-                },
-                name: 'GITHUB_SCOPE',
-                message: 'Github scope:'
-            },
-            {
-                name: 'STRATEGY',
-                message: 'Set cottontail strategy: ',
-                type: 'list',
-                choices: ['local', 'git', 'mongo']
-            },
-            {
-                name: 'DEBUG',
-                message: 'Output debug into console?',
-                type: 'confirm',
-                default: true
-            },
-            {
-                when: function (props) {
-                    return props.DEBUG;
-                },
-                name: 'DEBUG_LEVEL',
-                message: 'Set debug level',
-                type: 'list',
-                choices: ['all', 'debug', 'error', 'info', 'warn']
-            }
-        ];
-        
-        prompt(questions, function (answers) {
-            config.create(answers, __dirname + '/..', function () {
-                console.log(chalk.green.italic('Config successfully created.'))
-            });
-        });
+        var successCallback = function () {
+            console.log(chalk.green.italic('Config successfully created.'));
+            process.exit(0);
+        };
+
+        if (configFile) {
+
+            config.fromFile(configFile, cottontailRoot, successCallback);
+
+        } else {
+            promptUser(successCallback);
+        }
+
+
     });
 
 program
@@ -104,11 +137,22 @@ program
     .command('run')
     .description('Run Cottontail web app.')
     .action(function (options) {
+        var configFile = options.parent.config;
+
+        var successCallback = function () {
+            console.log(chalk.green.italic('Config successfully created.'));
+            runCottontail();
+        };
+
         parseOptions(options.parent);
-        logger.info('Starting Cottontail..');
-        logger.info('Available commands: ');
-        logger.info('start, stop, end(alias: close), restart (alias: rs) \n');
-        spawn.start();
+
+        if (configFile) {
+            console.log('Got config file: ', chalk.magenta.italic(configFile));
+            config.fromFile(configFile, cottontailRoot, successCallback);
+        } else {
+            runCottontail();
+        }
+
     });
 
 program
@@ -120,6 +164,11 @@ program
 
 program.parse(process.argv);
 
+/**
+ * Commands available  during cottotail run
+ *
+ * @type {{stop: Function, start: Function, restart: Function, close: Function, end: Function, rs: Function}}
+ */
 var commands = {
     
     stop: function () {
@@ -153,7 +202,7 @@ var commands = {
 
 };
 
-// Accept user input after commands run
+// Accept user input after cottontail run ( continue listening on stdin )
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 process.stdin.on('data', function (data) {

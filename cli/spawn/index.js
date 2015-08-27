@@ -18,11 +18,7 @@ module.exports = {
         
         process.chdir(__dirname + '/../../server');
 
-        var child = exec(nodeInterpreter + ' app.js', {
-            env: {
-                NEST_CARSKI: true
-            }
-        });
+        var child = exec(nodeInterpreter + ' app.js');
 
         child.stdout.on('data', function(data) {
             logger.info(data);
