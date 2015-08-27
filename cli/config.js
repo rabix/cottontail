@@ -8,6 +8,42 @@ var chalk = require('chalk');
 var configDir = './server/config/';
 var configTemplate = configDir + 'local.env.template.js';
 var configFile = configDir + 'local.env.js';
+var exec = require('child_process').exec;
+
+
+/**
+ * Whenever config gets changed we need to rebuild Frontend to take affect
+ *
+ * @param callback
+ * @private
+ */
+var _postConfigPhase = function (callback) {
+
+    console.log(chalk.green('Running frontend build to apply config changes...'));
+    process.chdir(__dirname + '/../client');
+
+    var child = exec('gulp build');
+
+    //child.stdout.on('data', function(data) {
+    //    //console.error(data);
+    //    // do nothing we wont cluter user stdout with fe build
+    //});
+    //
+    child.stderr.on('data', function(data) {
+        console.error('Error During frontend build: ', data);
+    });
+
+    child.on('close', function() {
+        console.log('Applied config change to frontend.');
+
+        if (typeof callback === 'function') {
+            callback();
+        }
+
+    });
+
+};
+
 /**
  * Create config from config template
  *
@@ -43,9 +79,7 @@ var create = function (conf, root, callback) {
         fs.writeFile(root + configFile, data, 'utf8', function(err) {
             if (err) return console.log('Failed to write config file.', err);
 
-            if (typeof callback === 'function') {
-                callback();
-            }
+            _postConfigPhase(callback);
         });
 
     });
@@ -89,7 +123,7 @@ var fromFile = function (filePath, root, callback) {
         switch (ext) {
             case '.js':
                 fs.copySync(path.normalize(filePath),  path.normalize(root + configFile));
-                callback();
+                _postConfigPhase(callback);
                 break;
             case '.json':
                 _readJSON(filePath, function (data) {
