@@ -38,8 +38,6 @@ var logger = new (winston.Logger)({
     exitOnError: false
 });
 
-console.log(config);
-
 if (config.env && config.env !== 'production' && !config.debug) {
 
     logger.add(winston.transports.Console, {

@@ -12,6 +12,7 @@ var prompt = require('./prompt');
 var fs = require('fs');
 var chalk = require('chalk');
 var logger = require('../server/components/logger');
+var config = require('./config');
 
 var info = JSON.parse(fs.readFileSync(path.normalize(__dirname + '/../package.json')).toString());
 
@@ -34,6 +35,68 @@ program
     .description('Configure Cottontail.')
     .action(function (options) {
         console.log(chalk.green.italic('Running Cottontail setup.'));
+
+        var questions = [
+            {
+                name: 'NODE_ENV',
+                message: 'Set node env:',
+                default: 'production'
+            },
+            {
+                name: 'GITHUB',
+                message: 'Enable Github auth',
+                default: false,
+                type: 'confirm'
+            },
+            {
+                when: function (props) {
+                    return props.GITHUB;
+                },
+                name: 'GITHUB_ID',
+                message: 'Github id:'
+            },
+            {
+                when: function (props) {
+                    return props.GITHUB;
+                },
+                name: 'GITHUB_SECRET',
+                message: 'Github secret:'
+            },
+            {
+                when: function (props) {
+                    return props.GITHUB;
+                },
+                name: 'GITHUB_SCOPE',
+                message: 'Github scope:'
+            },
+            {
+                name: 'STRATEGY',
+                message: 'Set cottontail strategy: ',
+                type: 'list',
+                choices: ['local', 'git', 'mongo']
+            },
+            {
+                name: 'DEBUG',
+                message: 'Output debug into console?',
+                type: 'confirm',
+                default: true
+            },
+            {
+                when: function (props) {
+                    return props.DEBUG;
+                },
+                name: 'DEBUG_LEVEL',
+                message: 'Set debug level',
+                type: 'list',
+                choices: ['all', 'debug', 'error', 'info', 'warn']
+            }
+        ];
+        
+        prompt(questions, function (answers) {
+            config.create(answers, __dirname + '/..', function () {
+                console.log(chalk.green.italic('Config successfully created.'))
+            });
+        });
     });
 
 program

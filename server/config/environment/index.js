@@ -2,15 +2,8 @@
 
 var path = require('path');
 var _ = require('lodash');
-var minimist = require('minimist');
 
-// dont nees first two args since they are node and app.js
-var args = minimist(process.argv.slice(2));
-var configFile = _.find(args, function (value, arg) {
-    return arg === 'c' || arg === 'config';
-});
-
-var _confPath = configFile || '../local.env';
+var _confPath = '../local.env';
 var _conf = require(_confPath) || {};
 
 _.assign(process.env, _conf);

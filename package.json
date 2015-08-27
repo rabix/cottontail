@@ -68,7 +68,7 @@
     "node": ">=0.10.0"
   },
   "scripts": {
-    "postinstall": "sh setup-client.sh",
+    "postinstall": "sh setup.sh",
     "start": "node server/app.js",
     "test": ""
   },

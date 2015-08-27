@@ -12,7 +12,6 @@ module.exports = {
     GITHUB_SECRET: <GITHUB_SECRET>,
     GITHUB_SCOPE: <GITHUB_SCOPE>,
 
-
     STRATEGY: <STRATEGY>,
     // Control debug level for modules using visionmedia/debug
     DEBUG_LEVEL: <DEBUG_LEVEL>,
