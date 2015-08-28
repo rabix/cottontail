@@ -60,7 +60,7 @@ var create = function (conf, root, callback) {
         }
         
         // Set default values if missing
-        conf['NODE_ENV'] = conf['NODE_ENV'] || 'development';
+        conf['NODE_ENV'] = conf['NODE_ENV'] || 'production';
         conf['WORKING_DIR'] = conf['WORKING_DIR'] || '/data/cottontail/fs';
         conf['GITHUB_ID'] = conf['GITHUB_ID'] || '';
         conf['GITHUB_SECRET'] = conf['GITHUB_SECRET'] || '';
