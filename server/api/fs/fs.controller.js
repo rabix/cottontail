@@ -6,7 +6,7 @@ var Store = require('../../components/store');
 var getUser = function (user) {
 
     if (user.provider === 'local') {
-        return user.name + '/';
+        return user.name;
     }
 
     return user[user.provider].login + '/';

@@ -41,7 +41,7 @@ function isAuthenticated() {
 
                 req.user = {
                     provider: 'local',
-                    name: 'cottontail'
+                    name: ''
                 };
 
                 next();
