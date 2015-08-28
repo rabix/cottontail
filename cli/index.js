@@ -30,12 +30,17 @@ var parseOptions = function (options) {
     
 };
 
-var getQuestions = function () {
+var getQuestions = function (conf) {
     return [
         {
             name: 'NODE_ENV',
-            message: 'Set node env:',
+            message: 'Set node env: (NOTE: change this only if you want to develop Cottontail)',
             default: 'production'
+        },
+        {
+            name: 'WORKING_DIR',
+            message: 'Set Working Directory:',
+            default: conf.WORKING_DIR || '/data/cottontail/fs'
         },
         {
             name: 'GITHUB',
@@ -78,7 +83,9 @@ var getQuestions = function () {
         },
         {
             when: function (props) {
-                return props.DEBUG;
+                //return props.DEBUG;
+                // for now disabling this since its not fully supported by client and server
+                return false;
             },
             name: 'DEBUG_LEVEL',
             message: 'Set debug level',
@@ -88,30 +95,32 @@ var getQuestions = function () {
     ];
 };
 
-var promptUser = function (callback) {
+var promptUser = function (conf, callback) {
 
-    prompt(getQuestions(), function (answers) {
+    prompt(getQuestions(conf), function (answers) {
         config.create(answers, cottontailRoot, callback || function () {});
     });
 
 };
 
-var runCottontail = function () {
+var runCottontail = function (env) {
 
     console.log('Starting Cottontail..');
     console.log('Available commands: ');
     console.log('start, stop, end(alias: close), restart (alias: rs) \n');
 
-    spawn.start();
-
+    if (typeof env.WORKING_DIR === 'undefined') {
+        delete env.WORKING_DIR;
+    }
+    spawn.start(env);
 };
 
 program
     .version(info.version || '0.0.1')
     // Setup
-    .command('setup')
+    .command('setup [workingDir]')
     .description('Configure Cottontail.')
-    .action(function (options) {
+    .action(function (workingDir, options) {
         var configFile = options.parent.config;
 
         console.log(chalk.green.italic('Running Cottontail setup.'));
@@ -126,7 +135,9 @@ program
             config.fromFile(configFile, cottontailRoot, successCallback);
 
         } else {
-            promptUser(successCallback);
+            promptUser({
+                WORKING_DIR: options.workingDir
+            }, successCallback);
         }
 
 
@@ -134,14 +145,20 @@ program
 
 program
     // Run
-    .command('run')
+    .command('run [workingDir]')
     .description('Run Cottontail web app.')
-    .action(function (options) {
+    .action(function (workingDir, options) {
         var configFile = options.parent.config;
+
+        if (workingDir) {
+            workingDir = path.resolve(workingDir);
+        }
 
         var successCallback = function () {
             console.log(chalk.green.italic('Config successfully created.'));
-            runCottontail();
+            runCottontail({
+                WORKING_DIR: workingDir
+            });
         };
 
         parseOptions(options.parent);
@@ -150,7 +167,9 @@ program
             console.log('Got config file: ', chalk.magenta.italic(configFile));
             config.fromFile(configFile, cottontailRoot, successCallback);
         } else {
-            runCottontail();
+            runCottontail({
+                WORKING_DIR: workingDir
+            });
         }
 
     });
@@ -190,6 +209,10 @@ var commands = {
         console.log(chalk.green.italic('> Closing process.'));
         this.stop();
         process.exit(0);
+    },
+
+    c: function () {
+        return this.close();
     },
 
     end: function () {

@@ -2,11 +2,15 @@
 
 var path = require('path');
 var _ = require('lodash');
-
 var _confPath = '../local.env';
 var _conf = require(_confPath) || {};
+// Need to do this for working DIR to get priority if run from certain location with ('.')
+// Because it gets overrided from config, and line of priority is User set > config set > default
+var processCopy = {
+    WORKING_DIR: process.env.WORKING_DIR || _conf.WORKING_DIR
+};
 
-_.assign(process.env, _conf);
+process.env = _.assign(process.env, _conf, processCopy);
 
 function requiredProcessEnv(name) {
     if (!process.env[name]) {
@@ -39,7 +43,7 @@ var all = {
     },
 
     store: {
-        path: process.env.STORE_PATH || '/data/cottontail/fs/'
+        path: process.env.WORKING_DIR || '/data/cottontail/fs/'
     },
 
     // Should we populate the DB with sample data?

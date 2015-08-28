@@ -54,12 +54,14 @@ var _postConfigPhase = function (callback) {
 var create = function (conf, root, callback) {
 
     fs.readFile(path.normalize(root + configTemplate), 'utf8', function(err, data) {
+
         if (err) {
             return console.error('Failed to read config template.', err);
         }
         
         // Set default values if missing
         conf['NODE_ENV'] = conf['NODE_ENV'] || 'development';
+        conf['WORKING_DIR'] = conf['WORKING_DIR'] || '/data/cottontail/fs';
         conf['GITHUB_ID'] = conf['GITHUB_ID'] || '';
         conf['GITHUB_SECRET'] = conf['GITHUB_SECRET'] || '';
         conf['GITHUB_SCOPE'] = conf['GITHUB_SCOPE'] || '';
@@ -117,8 +119,6 @@ var fromFile = function (filePath, root, callback) {
             console.error('Config file must have extension "js" or "json"');
             process.exit(1);
         }
-
-        console.log()
 
         switch (ext) {
             case '.js':

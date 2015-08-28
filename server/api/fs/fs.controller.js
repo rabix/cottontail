@@ -13,7 +13,7 @@ var getUser = function (user) {
 };
 
 exports.index = function (req, res) {
-
+    
     Store.getWorkspaces(getUser(req.user)).then(function (workspaces) {
         return res.json({
             workspaces: workspaces

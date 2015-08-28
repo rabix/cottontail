@@ -15,7 +15,6 @@ var mongoose = require('mongoose');
 var config = require('./config/environment');
 var winston = require('./components/logger');
 
-
 // Connect to database
 mongoose.connect(config.mongo.uri, config.mongo.options);
 mongoose.connection.on('error', function (err) {
@@ -35,7 +34,7 @@ if (config.strategy === 'local') {
         dir = dir + '/';
     }
 
-    Store.fs.mkdir(dir + 'local/').then(function () {
+    Store.fs.mkdir(dir + 'cottontail/').then(function () {
         Logger.info('User dir created.');
     }, function () {
         Logger.info('User dir already set.');
@@ -82,3 +81,4 @@ app.use(function (err, req, res, next) {
 
 // Expose app
 exports = module.exports = app;
+
