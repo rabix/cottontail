@@ -12,7 +12,7 @@ var _ = require('lodash');
 var Store = require('./components/store');
 var express = require('express');
 var config = require('./config/environment');
-var winston = require('./components/logger');
+var logger = require('./components/logger');
 
 if (config.strategy !== 'local') {
     // Connect to database only if strategy is different then local
@@ -68,8 +68,12 @@ server.listen(config.port, config.ip, function () {
  */
 app.use(function (err, req, res, next) {
 
+    if (err.code === 'EACCES') {
+        logger.error('Seems like we don\'t have write permissions here. ');
+    }
+
     console.error('Caught err: ', err);
-    winston.error({
+    logger.error({
         route: req.url || req.originalRoute,
         status: err.status || 500,
         error: err.body,

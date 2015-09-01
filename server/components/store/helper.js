@@ -7,6 +7,7 @@ var path = require('path');
 var q = require('q');
 var mkdirp = require('mkdirp');
 var dir = require('node-dir');
+var Error = require('../errors');
 
 module.exports = {
 
@@ -36,7 +37,7 @@ module.exports = {
                 fs.readFile(path, "utf-8", function (err, file) {
 
                     if(err) {
-                        console.log(err);
+                        Error.handle(err);
                         deferred.reject(err);
                     }
 
@@ -56,7 +57,10 @@ module.exports = {
         this.checkExsits(dirPath)
             .then(function () {
                 dir.files(dirPath, function(err, files) {
-                    if (err) return deferred.reject(err);
+                    if (err) {
+                        Error.handle(err);
+                        return deferred.reject(err);
+                    }
 
                     files = files.map(function(file) {
                         return {
@@ -82,7 +86,11 @@ module.exports = {
         this.checkExsits(path)
             .then(function () {
                 fs.readdir(path, function(err, files) {
-                    if (err) return deferred.reject(err);
+                    if (err) {
+                        Error.handle(err);
+                        return deferred.reject(err);
+                    }
+
                     deferred.resolve(files);
                 });
             })
@@ -106,6 +114,8 @@ module.exports = {
                     //doesnt exist
                     mkdirp(path, function (err) {
                         if (err) {
+                            Error.handle(err);
+
                             deferred.reject(err)
                         }
 
@@ -129,7 +139,7 @@ module.exports = {
 
             fs.writeFile(fileName, content || '', function(err) {
                 if(err) {
-                    console.log(err);
+                    Error.handle(err);
                     deferred.reject(err);
                 }
 
@@ -151,7 +161,7 @@ module.exports = {
         fs.truncate(fileName, 0, function(err){
 
             if(err) {
-                console.log(err);
+                Error.handle(err);
                 deferred.reject(err);
             }
 
