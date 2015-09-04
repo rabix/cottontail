@@ -7,7 +7,7 @@ var exec = require('child_process').exec;
 
 module.exports = {
 
-    start: function () {
+    start: function (env) {
 
         if (this.child) {
             logger.error('Server allready running.');
@@ -19,9 +19,7 @@ module.exports = {
         process.chdir(__dirname + '/../../server');
 
         var child = exec(nodeInterpreter + ' app.js', {
-            env: {
-                NEST_CARSKI: true
-            }
+            env: env || {}
         });
 
         child.stdout.on('data', function(data) {

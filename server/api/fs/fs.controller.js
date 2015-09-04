@@ -6,14 +6,15 @@ var Store = require('../../components/store');
 var getUser = function (user) {
 
     if (user.provider === 'local') {
-        return user.name + '/';
+        //return user.name;
+        return '';
     }
 
     return user[user.provider].login + '/';
 };
 
 exports.index = function (req, res) {
-
+    
     Store.getWorkspaces(getUser(req.user)).then(function (workspaces) {
         return res.json({
             workspaces: workspaces

@@ -11,20 +11,23 @@ var _ = require('lodash');
 
 var Store = require('./components/store');
 var express = require('express');
-var mongoose = require('mongoose');
 var config = require('./config/environment');
-var winston = require('./components/logger');
+var logger = require('./components/logger');
 
+if (config.strategy !== 'local') {
+    // Connect to database only if strategy is different then local
+    var mongoose = require('mongoose');
 
-// Connect to database
-mongoose.connect(config.mongo.uri, config.mongo.options);
-mongoose.connection.on('error', function (err) {
-        console.error('MongoDB connection error: ' + err);
-        process.exit(-1);
-    }
-);
+    mongoose.connect(config.mongo.uri, config.mongo.options);
+    mongoose.connection.on('error', function (err) {
+            console.error('MongoDB connection error: ' + err);
+            process.exit(-1);
+        }
+    );
+}
+
 // Populate DB with sample data
-if (config.seedDB) {
+if (config.seedDB && config.strategy !== 'local') {
     require('./config/seed');
 }
 
@@ -35,10 +38,10 @@ if (config.strategy === 'local') {
         dir = dir + '/';
     }
 
-    Store.fs.mkdir(dir + 'local/').then(function () {
-        Logger.info('User dir created.');
+    Store.fs.mkdir(dir).then(function () {
+        Logger.info('Working dir created.');
     }, function () {
-        Logger.info('User dir already set.');
+        Logger.info('Working dir exists.');
     });
 
 }
@@ -65,8 +68,12 @@ server.listen(config.port, config.ip, function () {
  */
 app.use(function (err, req, res, next) {
 
+    if (err.code === 'EACCES') {
+        logger.error('Seems like we don\'t have write permissions here. ');
+    }
+
     console.error('Caught err: ', err);
-    winston.error({
+    logger.error({
         route: req.url || req.originalRoute,
         status: err.status || 500,
         error: err.body,
@@ -82,3 +89,4 @@ app.use(function (err, req, res, next) {
 
 // Expose app
 exports = module.exports = app;
+

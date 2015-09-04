@@ -1,3 +1,4 @@
+node post-install.js
 cd client
 npm install
 bower install

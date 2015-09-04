@@ -3,9 +3,11 @@
  */
 
 import NewFile from '../../services/NewFile';
+import * as Keys from '../../services/Shortcuts';
 
 class IdeController {
-    constructor (Api, $stateParams, Editor) {
+    constructor (Api, $stateParams, Editor, $scope, Shortcuts) {
+	    this.$scope = $scope;
         this.openFiles = [];
         this.workspace = {
             name: $stateParams.workspace,
@@ -26,7 +28,11 @@ class IdeController {
             }, (err) => {
                 new Error(err);
             });
+
+	    this.addKeyboardHandlers($scope, Shortcuts);
     }
+
+	/** File methods **/
 
     fileAdded (file) {
         let fileObj = makeTab(new NewFile(file.name, file.type, file.content));
@@ -82,14 +88,59 @@ class IdeController {
 				this.setActiveFile(this.openFiles[length - 1]);
 			}
 		} else if (length === 0) {
+			this.activeFile = null;
 			delete this.activeFile;
 		}
-
 	}
 
 	setActiveFile (fileObj) {
 		this.activeFile = fileObj;
 		this.Editor.setMode(fileObj.type);
+	}
+
+	/**
+	 * Adds event handlers for keyboard shortcuts
+	 * @param $scope
+	 * @param Shortcuts
+	 */
+	addKeyboardHandlers($scope, Shortcuts) {
+		$scope.$on(Shortcuts.events.save, () => {
+			if (this.activeFile) {
+				this.saveFile(this.activeFile)
+			}
+		});
+
+		$scope.$on(Shortcuts.events.close, function() {
+			if (this.activeFile) {
+				this.closeFile(this.activeFile);
+				$scope.$apply();
+			}
+		}.bind(this));
+
+		$scope.$on(Shortcuts.events.moveRight, function() {
+			if (this.openFiles.length > 1) {
+				let index = _.indexOf(this.openFiles, this.activeFile);
+				if (index === this.openFiles.length - 1) {
+					this.setActiveFile(this.openFiles[0]);
+				} else {
+					this.setActiveFile(this.openFiles[index + 1]);
+				}
+			}
+			$scope.$apply();
+		}.bind(this));
+
+		/** Move to left **/
+		$scope.$on(Shortcuts.events.moveLeft, function() {
+			if (this.openFiles.length > 1) {
+				let index = _.indexOf(this.openFiles, this.activeFile);
+				if (index === 0) {
+					this.setActiveFile(this.openFiles[this.openFiles.length - 1]);
+				} else {
+					this.setActiveFile(this.openFiles[index - 1]);
+				}
+			}
+			$scope.$apply();
+		}.bind(this));
 	}
 }
 
@@ -98,7 +149,7 @@ function makeTab (obj) {
 	return obj;
 }
 
-IdeController.$inject = ['Api', '$stateParams', 'Editor'];
+IdeController.$inject = ['Api', '$stateParams', 'Editor', '$scope', 'Shortcuts'];
 
 angular.module('cottontail').controller('IdeController', IdeController);
 

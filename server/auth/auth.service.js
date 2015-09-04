@@ -41,7 +41,7 @@ function isAuthenticated() {
 
                 req.user = {
                     provider: 'local',
-                    name: 'local'
+                    name: ''
                 };
 
                 next();
