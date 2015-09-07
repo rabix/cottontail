@@ -3,30 +3,9 @@
  */
 
 import * as config from '../../constants/editor.const';
-import * as CWL from '../../models/cwl.model.js';
-import * as key from '../../services/Shortcuts';
+import * as Autocomplete from '../../services/Autocomplete';
 const _private = new WeakMap();
 const _editor = {};
-const _callbacks = {};
-let shortcuts = [];
-
-class Editor {
-	constructor() {
-		this.config = {
-			require: ['ace/text/language_tools'],
-			advanced: {
-				enableSnippets: true,
-				enableBaicAutocompletion: false
-			},
-			theme: config.EDITOR_THEME,
-			onLoad: load
-		};
-	}
-
-	setMode (mode) {
-		this.config.mode = mode;
-	}
-}
 
 const load = function (editor) {
 	_private.set(_editor, editor);
@@ -34,19 +13,42 @@ const load = function (editor) {
 	let langTools = ace.require('ace/ext/language_tools');
 
 	let cwlCompleter = {
-		getCompletions: function(editor, session, pos, prefix, callback) {
-			callback(null, CWL.getMatches(prefix));
+		getCompletions: function (editor, session, pos, prefix, callback) {
+			let mode = session.getMode().$id.split('/')[2],
+				matches = Autocomplete.getMatches(prefix, mode);
+
+			callback(null, matches);
 		}
 	};
 
 	langTools.setCompleters([cwlCompleter]); //to disable local completer
 
 	editor.setOptions({
-		enableBasicAutocompletion: true
-	})
-	
+		enableBasicAutocompletion: true,
+		enableLiveAutocompletion: true
+	});
+
 	editor.$blockScrolling = Infinity;
 };
+
+class Editor {
+	constructor() {
+		this.config = {
+			require: ['ace/text/language_tools'],
+			advanced: {
+				enableSnippets: true,
+				enableLiveAutocompletion: false,
+				enableBasicAutocompletion: false
+			},
+			theme: config.EDITOR_THEME,
+			onLoad: load
+		};
+	}
+
+	setMode(mode) {
+		this.config.mode = mode;
+	}
+}
 
 angular.module('cottontail').service('Editor', Editor);
 

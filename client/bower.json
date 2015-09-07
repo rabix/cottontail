@@ -34,8 +34,8 @@
         "src/mode-json.js",
         "src/mode-javascript.js",
         "src/mode-yaml.js",
-        "src/theme-xcode.js"
-        "src/src-min/ext-language_tools.js"
+        "src/theme-xcode.js",
+        "src/ext-language_tools.js"
       ]
     }
   }
