@@ -3,7 +3,6 @@
  */
 
 import NewFile from '../../services/NewFile';
-import * as Keys from '../../services/Shortcuts';
 
 class IdeController {
     constructor (Api, $stateParams, Editor, $scope, Shortcuts) {
