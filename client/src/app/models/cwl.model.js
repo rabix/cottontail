@@ -1,3 +1,6 @@
+import JsonSchemaParser from '../services/JsonSchemaParser';
+import * as toolSchema from '../schemas/tool.schema';
+
 const keyList = [ 'id',
 	'class',
 	'@context',
@@ -57,11 +60,35 @@ const keyList = [ 'id',
 	'cpu' ];
 
 const makeJsonSnippet = function (key) {
+	let parser = new JsonSchemaParser(toolSchema),
+		type = parser.resolveKeyType(key),
+		snippet = key;
+	let typeName = type ? type.type : 'string';
+
+	// strings are formatted funky to preserve white spaces
+	switch (typeName) {
+		case 'string':
+			snippet =
+`"${key}": "\${1:${key}}"`;
+			break;
+		case 'object':
+			snippet =
+`"${key}": {
+	"\${1}": \${2}
+}`;
+			break;
+		case 'array':
+			snippet =
+`"${key}": [
+	\${1}
+]`;
+	}
+
 	return {
 		value: key,
 		meta: 'CWL',
 		caption: key,
-		snippet: '"' + key + '": '
+		snippet: snippet
 	};
 };
 

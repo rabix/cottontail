@@ -17,6 +17,8 @@ const load = function (editor) {
 			let mode = session.getMode().$id.split('/')[2],
 				matches = Autocomplete.getMatches(prefix, mode);
 
+			Autocomplete.getPrefixWords(session, pos);
+
 			callback(null, matches);
 		}
 	};

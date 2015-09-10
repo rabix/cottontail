@@ -1,6 +1,41 @@
-
 class JsonSchemaParser {
-	constructor() {}
+	constructor(schema) {
+		this.schema = this.resolveRefs(schema);
+	}
+
+	resolveKeyType(key, schema = this.schema) {
+		if (!_.isString(key)) {
+			throw new Error('JsonSchemaParser.resolveKeyType(key): Key must be a string');
+		}
+
+		let result = null;
+
+		if (_.isArray(schema)) {
+			for (var i = 0; i < schema.length; i++) {
+				result = this.resolveKeyType(key, schema[i]);
+				if (result) {
+					break;
+				}
+			}
+		} else {
+			for (var oProp in schema) {
+				if (!schema.hasOwnProperty(oProp)) {
+					continue;
+				}
+				if (oProp === key) {
+					return schema[key];
+				}
+				if (schema[oProp] instanceof Object || schema[oProp] instanceof Array) {
+					result = this.resolveKeyType(key, schema[oProp]);
+					if (result) {
+						break;
+					}
+				}
+			}
+		}
+
+		return result;
+	}
 
 	resolveRefs(schema) {
 		if (typeof schema === 'string') {
@@ -17,7 +52,7 @@ class JsonSchemaParser {
 function traverseSchema(schema, defs) {
 
 	if (_.isArray(schema)) {
-		
+
 		schema.forEach((item) => {
 			if (_.isObject(item) || _.isArray(item)) {
 				traverseSchema(item, defs);
@@ -29,10 +64,8 @@ function traverseSchema(schema, defs) {
 
 		keys.forEach((key) => {
 			if (key === '$ref') {
-				console.log('got a $ref for ', schema);
 				_.extend(schema, getReference(schema[key], defs));
-				
-				
+
 			} else if (_.isObject(schema[key]) || _.isArray(schema[key]) && !schema['$ref']) {
 				traverseSchema(schema[key], defs);
 			}

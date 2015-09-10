@@ -1,6 +1,5 @@
 import * as CWL from '../models/cwl.model';
-import * as JsonSchemaParser from 'JsonSchemaparser';
-import * as toolSchema from '../schemas/tool.schema';
+import * as JsonSchemaParser from './JsonSchemaParser';
 
 
 const calculateLevenshteinDistance = function (a, b) {
@@ -60,6 +59,23 @@ const fuzzySearch = function (input, mode) {
 	return matches;
 };
 
+
+const getPrefixWords = function (doc, pos) {
+
+	let Range = ace.require('ace/range').Range;
+	let splitRegex =  /[^a-zA-Z_0-9\$\-\u00C0-\u1FFF\u2C00-\uD7FF\w]+/;
+	let keyRegex = /"(.*)":/;
+
+	let word = doc.getValue().split(splitRegex);
+	let textBefore = doc.getTextRange(Range.fromPoints({row: 0, column: 0}, pos)).split(splitRegex);
+	let wordBefore = textBefore[textBefore.length - 2];
+
+	debugger;
+
+
+
+};
+
 /**
  * Matches by levenshtein distance.
  * @param input
@@ -81,4 +97,4 @@ const getMatches = function (input, mode) {
 };
 
 
-export {getMatches, fuzzySearch};
+export {getMatches, fuzzySearch, getPrefixWords};
