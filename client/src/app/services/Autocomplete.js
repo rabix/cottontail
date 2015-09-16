@@ -1,5 +1,4 @@
 import * as CWL from '../models/cwl.model';
-import * as JsonSchemaParser from './JsonSchemaParser';
 
 
 const calculateLevenshteinDistance = function (a, b) {
@@ -51,29 +50,15 @@ const fuzzySearch = function (input, mode) {
 	CWL.keyList.forEach((key) => {
 		let snippet = CWL.generateSnippet(key, mode);
 		snippet.score = key.search(regex);
+
+		snippet = addCompleter(snippet);
+
 		if (snippet.score !== -1) {
 			matches.push(snippet);
 		}
 	});
 
 	return matches;
-};
-
-
-const getPrefixWords = function (doc, pos) {
-
-	let Range = ace.require('ace/range').Range;
-	let splitRegex =  /[^a-zA-Z_0-9\$\-\u00C0-\u1FFF\u2C00-\uD7FF\w]+/;
-	let keyRegex = /"(.*)":/;
-
-	let word = doc.getValue().split(splitRegex);
-	let textBefore = doc.getTextRange(Range.fromPoints({row: 0, column: 0}, pos)).split(splitRegex);
-	let wordBefore = textBefore[textBefore.length - 2];
-
-	debugger;
-
-
-
 };
 
 /**
@@ -88,6 +73,9 @@ const getMatches = function (input, mode) {
 	CWL.keyList.forEach((key) => {
 		let snippet = CWL.generateSnippet(key, mode);
 		snippet.score = calculateLevenshteinDistance(input, key);
+
+		snippet = addCompleter(snippet);
+
 		if (snippet.score < 20) {
 			matches.push(snippet);
 		}
@@ -96,5 +84,45 @@ const getMatches = function (input, mode) {
 	return matches;
 };
 
+function addCompleter (snippet) {
+	snippet.completer = {
+		insertMatch: (editor, data) => {
+			filterInsertion(editor, editor.getCursorPosition(), data);
+		}
+	};
 
-export {getMatches, fuzzySearch, getPrefixWords};
+	return snippet;
+}
+
+
+function filterInsertion (editor, pos, snippet) {
+
+	let	session = editor.session,
+		currentRow = session.getLine(pos.row),
+		frontIndex = pos.column - 1,
+		backIndex = pos.column,
+
+		frontChar = currentRow[frontIndex],
+		backChar = currentRow[backIndex],
+
+		Range = ace.require('ace/range').Range,
+		snippetManager = ace.require('ace/snippets').snippetManager;
+
+	if (frontChar === '"' && backChar === '"') {
+		currentRow = currentRow.substring(0, frontIndex) + currentRow.substring(frontIndex + 1);
+		currentRow = currentRow.substring(0, backIndex - 1) + currentRow.substring(backIndex);
+		pos.column = pos.column - 1;
+	} else if (frontChar === '"') {
+		currentRow = currentRow.substring(0, frontIndex) + currentRow.substring(frontIndex + 1);
+		pos.column = pos.column + 1;
+	} else if (backChar === '"') {
+		currentRow = currentRow.substring(0, backIndex) + currentRow.substring(backIndex + 1);
+		pos.column = pos.column - 1;
+	}
+
+	session.replace(new Range(pos.row, 0, pos.row, Number.MAX_VALUE), currentRow);
+	editor.selection.setSelectionAnchor(pos.row, pos.column);
+	snippetManager.insertSnippet(editor, snippet.snippet);
+}
+
+export {getMatches, fuzzySearch};
