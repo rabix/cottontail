@@ -38,7 +38,7 @@ if (config.strategy !== 'local') {
     });
 }
 
-module.exports = function (app) {
+module.exports = function(app) {
     var env = app.get('env');
 
     app.set('views', config.root + '/server/views');
@@ -50,7 +50,7 @@ module.exports = function (app) {
     app.use(methodOverride());
     app.use(cookieParser());
 
-    app.use(function (req, res, next) {
+    app.use(function(req, res, next) {
 
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept');
@@ -63,32 +63,34 @@ module.exports = function (app) {
 
     // Persist sessions with mongoStore
     // We need to enable sessions for passport twitter because its an oauth 1.0 strategy
-   app.use(session(sessionConfig));
+    app.use(session(sessionConfig));
 
-    if ('production' === env) {
-        app.use(favicon(path.join(config.root, config.clientPath, 'favicon.ico')));
-        app.use(express.static(path.join(config.root, config.clientPath)));
-        app.set('appPath', path.join(config.root, config.clientPath));
-    }
+    //if ('production' === env) {
+    //    app.use(favicon(path.join(config.root, config.clientPath, 'favicon.ico')));
+    //    app.use(express.static(path.join(config.root, config.clientPath)));
+    //    app.set('appPath', path.join(config.root, config.clientPath));
+    //}
 
     if ('development' === env || 'test' === env) {
         app.use(require('connect-livereload')());
 
+        // served by gulp
         app.use(express.static(path.join(config.root, 'client/.tmp/serve')));
+        // the source root
         app.use(express.static(path.join(config.root, 'client/src')));
+        // bower componenets
         app.use('/bower_components', express.static(path.join(config.root, 'client/bower_components')));
         app.set('appPath', path.join(config.root, 'client'));
     }
 
 
-
+    // Logs requests to stdout
     app.use(morgan({
         format: 'dev',
         'stream': {
-            write: function (str) {
+            write: function(str) {
                 winston.info(str);
             }
-        }
-    }));
+        }    }));
 
 };
