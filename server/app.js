@@ -7,6 +7,10 @@
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
+var pathArgument = process.argv[2];
+console.log('path is '+ pathArgument);
+process.env.WORKING_DIR = pathArgument || __dirname;
+
 var _ = require('lodash');
 
 var Store = require('./components/store');
