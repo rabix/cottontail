@@ -7,12 +7,15 @@
 // Set default node environment to development
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
+var validationComponent = require('./components/validation');
+
+/* The path argument needs to be set before the environment config is loaded */
 var pathArgument = process.argv[2];
-console.log('path is '+ pathArgument);
-process.env.WORKING_DIR = pathArgument || __dirname;
+validationComponent.validateWorkingDir(pathArgument);
+process.env.WORKING_DIR = pathArgument;
+console.log('WORKING_DIR is '+ process.env.WORKING_DIR);
 
 var _ = require('lodash');
-
 var Store = require('./components/store');
 var express = require('express');
 var config = require('./config/environment');
