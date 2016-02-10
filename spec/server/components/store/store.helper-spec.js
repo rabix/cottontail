@@ -1,6 +1,6 @@
 var storeHelper = require('../../../../server/components/store/helper.js');
 
-describe('validationComponent', function () {
+describe('storeHelper', function () {
 
     describe('checkExsits', function () {
 
@@ -31,9 +31,5 @@ describe('validationComponent', function () {
                 })
                 .finally(done);
         });
-    });
-
-    describe('readFile', function () {
-
     });
 });
