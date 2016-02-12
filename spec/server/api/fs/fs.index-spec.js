@@ -4,8 +4,36 @@ var validationComponent = require('../../../../server/components/validation');
 var request = require('supertest');
 var q = require('q');
 
-describe('fs api', function () {
+var requestApp = function(app) {
+    var appInstance = request(app);
+    var requestResult = null;
 
+    return {
+        get: function(url) {
+            requestResult = appInstance.get(url);
+            return this;
+        },
+        post: function(url) {
+            requestResult = appInstance.post(url);
+            return this;
+        },
+        expectStatusTypeAndAssertResponse: function(expectedStatus, type, responseAssertion, done) {
+            requestResult.expect(expectedStatus)
+                .expect('Content-Type', type)
+                .end(function(err, res) {
+                    if (err) {
+                        done.fail(err);
+                    } else {
+                        responseAssertion(res);
+                        done();
+                    }
+                });
+            return this;
+        }
+    }
+};
+
+describe('fs api', function () {
     var app;
 
     beforeEach(function() {
@@ -21,7 +49,6 @@ describe('fs api', function () {
     });
 
     describe('GET /api/fs route', function() {
-
         it('should respond with JSON array containing workspaces when getWorkspaces succeeds', function(done) {
             spyOn(Store, "getWorkspaces").and.callFake(function() {
                 var deferred = q.defer();
@@ -29,18 +56,11 @@ describe('fs api', function () {
                 return deferred.promise;
             });
 
-            request(app)
+            requestApp(app)
                 .get('/api/fs')
-                .expect(200)
-                .expect('Content-Type', /json/)
-                .end(function(err, res) {
-                    if (err) {
-                        done.fail(err);
-                    } else {
-                        expect(res.body.workspaces).toEqual(['a', 'b', 'c']);
-                        done();
-                    }
-                });
+                .expectStatusTypeAndAssertResponse(200, /json/, function(res) {
+                    expect(res.body.workspaces).toEqual(['a', 'b', 'c']);
+                }, done);
         });
 
         it('should respond error message when getWorkspaces fails', function(done) {
@@ -50,23 +70,15 @@ describe('fs api', function () {
                 return deferred.promise;
             });
 
-            request(app)
+            requestApp(app)
                 .get('/api/fs')
-                .expect(500)
-                .expect('Content-Type', /json/)
-                .end(function(err, res) {
-                    if (err) {
-                        done.fail(err);
-                    } else {
-                        expect(res.body.error).toEqual('failed message');
-                        done();
-                    }
-                });
+                .expectStatusTypeAndAssertResponse(500, /json/, function(res) {
+                    expect(res.body.error).toEqual('failed message');
+                }, done);
         });
     });
 
     describe('GET /api/fs/workspace1 route', function() {
-
         it('should respond with JSON array containing files when getFiles succeeds', function(done) {
             spyOn(Store, "getFiles").and.callFake(function() {
                 var deferred = q.defer();
@@ -74,18 +86,11 @@ describe('fs api', function () {
                 return deferred.promise;
             });
 
-            request(app)
+            requestApp(app)
                 .get('/api/fs/workspace1')
-                .expect(200)
-                .expect('Content-Type', /json/)
-                .end(function(err, res) {
-                    if (err) {
-                        done.fail(err);
-                    } else {
-                        expect(res.body.files).toEqual(['file1','file2','file3']);
-                        done();
-                    }
-                });
+                .expectStatusTypeAndAssertResponse(200, /json/, function(res) {
+                    expect(res.body.files).toEqual(['file1','file2','file3']);
+                }, done);
         });
 
         it('should respond error message when getFiles fails', function(done) {
@@ -95,23 +100,15 @@ describe('fs api', function () {
                 return deferred.promise;
             });
 
-            request(app)
+            requestApp(app)
                 .get('/api/fs/workspace1')
-                .expect(500)
-                .expect('Content-Type', /json/)
-                .end(function(err, res) {
-                    if (err) {
-                        done.fail(err);
-                    } else {
-                        expect(res.body.error).toEqual('failed message');
-                        done();
-                    }
-                });
+                .expectStatusTypeAndAssertResponse(500, /json/, function(res) {
+                    expect(res.body.error).toEqual('failed message');
+                }, done);
         });
     });
 
     describe('POST /api/fs/workspace1 route', function() {
-
         it('should respond with status 200 when createWorkspace succeeds', function(done) {
             spyOn(Store, "createWorkspace").and.callFake(function() {
                 var deferred = q.defer();
@@ -119,18 +116,11 @@ describe('fs api', function () {
                 return deferred.promise;
             });
 
-            request(app)
+            requestApp(app)
                 .post('/api/fs/workspace1')
-                .expect(200)
-                .expect('Content-Type', /json/)
-                .end(function(err, res) {
-                    if (err) {
-                        done.fail(err);
-                    } else {
-                        expect(res.body.message).toEqual('Workspace successfully created.');
-                        done();
-                    }
-                });
+                .expectStatusTypeAndAssertResponse(200, /json/, function(res) {
+                    expect(res.body.message).toEqual('Workspace successfully created.');
+                }, done);
         });
 
         it('should respond with status 500 when createWorkspace fails', function(done) {
@@ -140,18 +130,11 @@ describe('fs api', function () {
                 return deferred.promise;
             });
 
-            request(app)
+            requestApp(app)
                 .post('/api/fs/workspace1')
-                .expect(500)
-                .expect('Content-Type', /json/)
-                .end(function(err, res) {
-                    if (err) {
-                        done.fail(err);
-                    } else {
-                        expect(res.body.error).toEqual('fail message');
-                        done();
-                    }
-                });
+                .expectStatusTypeAndAssertResponse(500, /json/, function(res) {
+                    expect(res.body.error).toEqual('fail message');
+                }, done);
         });
     });
 });
