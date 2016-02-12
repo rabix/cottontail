@@ -12,5 +12,11 @@ jasmine.configureDefaultReporter({
 });
 
 jasmine.addReporter(junitReporter);
+jasmine.addReporter({
+    specStarted: function (result) {
+        console.log(result.description);
+    }
+});
+
 jasmine.loadConfigFile('spec/support/jasmine.json');
 jasmine.execute();

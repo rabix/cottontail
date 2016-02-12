@@ -17,6 +17,10 @@ var requestApp = function(app) {
             requestResult = appInstance.post(url);
             return this;
         },
+        put: function(url) {
+            requestResult = appInstance.put(url);
+            return this;
+        },
         expectStatusTypeAndAssertResponse: function(expectedStatus, type, responseAssertion, done) {
             requestResult.expect(expectedStatus)
                 .expect('Content-Type', type)
@@ -134,6 +138,98 @@ describe('fs api', function () {
                 .post('/api/fs/workspace1')
                 .expectStatusTypeAndAssertResponse(500, /json/, function(res) {
                     expect(res.body.error).toEqual('fail message');
+                }, done);
+        });
+    });
+
+    describe('GET /workspace/file route', function() {
+        it('should respond with status 200 when getFile succeeds', function(done) {
+            spyOn(Store, "getFile").and.callFake(function() {
+                var deferred = q.defer();
+                deferred.resolve({name: "fakeFile"});
+                return deferred.promise;
+            });
+
+            requestApp(app)
+                .get('/api/fs/workspace/file')
+                .expectStatusTypeAndAssertResponse(200, /json/, function(res) {
+                    expect(res.body.content).toEqual({name: "fakeFile"});
+                }, done);
+        });
+
+        it('should respond with status 500 when getFile fails', function(done) {
+            spyOn(Store, "getFile").and.callFake(function() {
+                var deferred = q.defer();
+                deferred.reject('error message');
+                return deferred.promise;
+            });
+
+            requestApp(app)
+                .get('/api/fs/workspace/file')
+                .expectStatusTypeAndAssertResponse(500, /json/, function(res) {
+                    expect(res.body.error).toEqual('error message');
+                }, done);
+        });
+    });
+
+    describe('POST /workspace/file route', function() {
+        it('should respond with status 200 when createFile succeeds', function(done) {
+            spyOn(Store, "createFile").and.callFake(function() {
+                var deferred = q.defer();
+                deferred.resolve({name: "fakeFile"});
+                return deferred.promise;
+            });
+
+            requestApp(app)
+                .post('/api/fs/workspace/file')
+                .expectStatusTypeAndAssertResponse(200, /json/, function(res) {
+                    expect(res.body.message).toEqual('File created successfully.')
+                    expect(res.body.content).toEqual({name: "fakeFile"});
+                }, done);
+        });
+
+        it('should respond with status 500 when createFile fails', function(done) {
+            spyOn(Store, "createFile").and.callFake(function() {
+                var deferred = q.defer();
+                deferred.reject('error message');
+                return deferred.promise;
+            });
+
+            requestApp(app)
+                .post('/api/fs/workspace/file')
+                .expectStatusTypeAndAssertResponse(500, /json/, function(res) {
+                    expect(res.body.error).toEqual('error message');
+                }, done);
+        });
+    });
+
+    describe('PUT /workspace/file route', function() {
+        it('should respond with status 200 when writeFile succeeds', function(done) {
+            spyOn(Store, "writeFile").and.callFake(function() {
+                var deferred = q.defer();
+                deferred.resolve({name: "fakeFile"});
+                return deferred.promise;
+            });
+
+            requestApp(app)
+                .put('/api/fs/workspace/file')
+                .expectStatusTypeAndAssertResponse(200, /json/, function(res) {
+                    expect(res.body.message).toEqual('File updated successfully.')
+                    expect(res.body.content).toEqual({name: "fakeFile"});
+                }, done);
+        });
+
+        it('should respond with status 500 when createFile fails', function(done) {
+            spyOn(Store, "writeFile").and.callFake(function() {
+                var deferred = q.defer();
+                deferred.reject('error message');
+                return deferred.promise;
+            });
+
+            requestApp(app)
+                .put('/api/fs/workspace/file')
+                .expectStatusTypeAndAssertResponse(500, /json/, function(res) {
+                    expect(res.body.error).toEqual('error message');
                 }, done);
         });
     });
