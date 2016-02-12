@@ -13,6 +13,7 @@ var Store = require('./components/store');
 var express = require('express');
 var config = require('./config/environment');
 var logger = require('./components/logger');
+var bodyParser = require('body-parser');
 
 if (config.strategy !== 'local') {
     // Connect to database only if strategy is different then local
@@ -48,6 +49,8 @@ if (config.strategy === 'local') {
 
 // Setup server
 var app = express();
+app.use(bodyParser.json({limit: '50mb'}));
+
 var server = require('http').createServer(app);
 //var socketio = require('socket.io')(server, {
 //    serveClient: config.env !== 'production',
