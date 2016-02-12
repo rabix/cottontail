@@ -7,6 +7,18 @@ var junitReporter = new reporters.JUnitXmlReporter({
     consolidateAll: true
 });
 
+jasmine.loadConfig({
+    "spec_dir": "spec",
+    "spec_files": [
+        "**/*[sS]pec.js"
+    ],
+    "helpers": [
+        "helpers/**/*.js"
+    ],
+    "stopSpecOnExpectationFailure": false,
+    "random": false
+});
+
 jasmine.configureDefaultReporter({
     showColors: true
 });
@@ -18,5 +30,4 @@ jasmine.addReporter({
     }
 });
 
-jasmine.loadConfigFile('spec/support/jasmine.json');
 jasmine.execute();
