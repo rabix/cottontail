@@ -3,7 +3,8 @@
  */
 
 var fs = require('fs');
-var YAML = require('yamljs');
+var yaml = require('yaml-js');
+var json2yaml = require('json2yaml');
 var path = require('path');
 var q = require('q');
 var mkdirp = require('mkdirp');
@@ -44,8 +45,9 @@ module.exports = {
 
                     var extension = path.extname(dirPath);
                     if(extension === '.yaml') {
-                        var nativeYamlObject = YAML.parse(file);
-                        var jsonString = JSON.stringify(nativeYamlObject, null, 4);
+
+                        var yamlFile = yaml.load(file);
+                        var jsonString = JSON.stringify(yamlFile, null, 4);
                         deferred.resolve(jsonString);
                     }
 
@@ -185,6 +187,13 @@ module.exports = {
 
         this.truncate(fileName)
             .then(function () {
+
+                var extension = path.extname(fileName);
+                if(extension === '.yaml') {
+                    var yamlText = json2yaml.stringify(JSON.parse(content));
+                    return _self.createFile(fileName, yamlText);
+                }
+
                 return _self.createFile(fileName, content);
             })
             .then(function () {
