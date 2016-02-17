@@ -11,30 +11,29 @@ if (dir.charAt(dir.length - 1) !== '/') {
 }
 
 module.exports = {
-
     fs: helper,
 
-    getFile: function (workspace, file) {
-        return this.fs.readFile(dir + workspace + '/' + file);
+    getFile: function (file) {
+        return helper.readFile(dir + '/' + file);
     },
 
-    getFiles: function (workspace) {
-        return this.fs.readWorkspace(dir + workspace);
+    getFiles: function () {
+        return helper.readWorkspace(dir);
     },
 
-    getWorkspaces: function (path) {
-        return this.fs.readDir(dir + path);
+    getDir: function () {
+        return helper.readDir(dir);
     },
 
     createWorkspace: function (name) {
-        return this.fs.mkdir(dir + name);
+        return helper.mkdir(dir + name);
     },
 
-    createFile: function (workspace, file, content) {
-        return this.fs.createFile(dir + workspace + '/' + file);
+    createFile: function (file) {
+        return helper.createFile(dir + '/' + file);
     },
 
-    writeFile: function (workspace, file, content) {
-        return this.fs.overwrite(dir + workspace + '/' + file, content);
+    writeFile: function (file, content) {
+        return helper.overwrite(dir + '/' + file, content);
     }
 };

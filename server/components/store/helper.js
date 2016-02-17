@@ -56,20 +56,21 @@ module.exports = {
 
         this.checkExsits(dirPath)
             .then(function () {
-                dir.files(dirPath, function(err, files) {
+                dir.paths(dirPath, function(err, paths) {
                     if (err) {
                         Error.handle(err);
-                        return deferred.reject(err);
+                        return deferred.reject(reason);
                     }
 
-                    files = files.map(function(file) {
+                    paths.files = paths.files.map(function(file) {
                         return {
+                            path: file,
                             type: path.extname(file),
                             name: path.basename(file)
                         }
                     });
 
-                    deferred.resolve(files);
+                    deferred.resolve(paths);
                 });
             })
             .catch(function (err) {

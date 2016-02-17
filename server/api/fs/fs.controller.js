@@ -4,9 +4,9 @@ var Store = require('../../components/store');
 
 exports.index = function (req, res) {
     
-    Store.getWorkspaces('').then(function (workspaces) {
+    Store.getFiles().then(function (paths) {
         return res.json({
-            workspaces: workspaces
+            paths: paths
         });
     }).catch(function (err) {
         handleError(res, err);
@@ -30,10 +30,9 @@ exports.getFile = function (req, res) {
 exports.getFilesInWorkspace = function (req, res) {
     var workspace = req.params.workspace;
 
-    Store.getFiles(workspace).then(function (files) {
-
+    Store.getFiles().then(function (paths) {
         return res.json({
-            files: files
+            paths: paths
         });
     }).catch(function (err) {
         handleError(res, err);
@@ -57,10 +56,9 @@ exports.createWorkspace = function (req, res) {
 };
 
 exports.updateFile = function (req, res) {
-    var workspace = req.params.workspace;
     var file = req.params.file;
 
-    Store.writeFile(workspace, file, req.body.content).then(function (file) {
+    Store.writeFile(file, req.body.content).then(function (file) {
 
         return res.json({
             message: 'File updated successfully.',
