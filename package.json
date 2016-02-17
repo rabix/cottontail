@@ -44,7 +44,8 @@
     "socket.io": "^1.0.6",
     "socket.io-client": "^1.0.6",
     "socketio-jwt": "^3.0.0",
-    "winston": "^0.7.3"
+    "winston": "^0.7.3",
+    "yamljs": "^0.2.5"
   },
   "devDependencies": {
     "babel-cli": "^6.4.5",
