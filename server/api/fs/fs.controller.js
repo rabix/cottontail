@@ -2,23 +2,10 @@
 
 var Store = require('../../components/store');
 
-exports.index = function (req, res) {
-    
-    Store.getWorkspaces('').then(function (workspaces) {
-        return res.json({
-            workspaces: workspaces
-        });
-    }).catch(function (err) {
-        handleError(res, err);
-    });
-};
-
 exports.getFile = function (req, res) {
-    var workspace = req.params.workspace;
     var file = req.params.file;
 
-    Store.getFile(workspace, file).then(function (data) {
-	    
+    Store.getFile(file).then(function (data) {
         return res.json({
             content: data
         });
@@ -28,28 +15,9 @@ exports.getFile = function (req, res) {
 };
 
 exports.getFilesInWorkspace = function (req, res) {
-    var workspace = req.params.workspace;
-
-    Store.getFiles(workspace).then(function (files) {
-
+    Store.getFiles().then(function (paths) {
         return res.json({
-            files: files
-        });
-    }).catch(function (err) {
-        handleError(res, err);
-    });
-};
-
-exports.createWorkspace = function (req, res) {
-    var name = req.params.workspace;
-
-    console.log(name);
-    
-    Store.createWorkspace(name).then(function (ws) {
-        console.log(ws);
-
-        return res.json({
-            message: 'Workspace successfully created.'
+            paths: paths
         });
     }).catch(function (err) {
         handleError(res, err);
@@ -57,10 +25,9 @@ exports.createWorkspace = function (req, res) {
 };
 
 exports.updateFile = function (req, res) {
-    var workspace = req.params.workspace;
     var file = req.params.file;
 
-    Store.writeFile(workspace, file, req.body.content).then(function (file) {
+    Store.writeFile(file, req.body.content).then(function (file) {
 
         return res.json({
             message: 'File updated successfully.',
@@ -72,10 +39,9 @@ exports.updateFile = function (req, res) {
 };
 
 exports.createFile = function (req, res) {
-    var workspace = req.params.workspace;
     var file = req.params.file;
 
-    Store.createFile(workspace, file).then(function (file) {
+    Store.createFile(file).then(function (file) {
 
         return res.json({
             message: 'File created successfully.',

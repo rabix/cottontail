@@ -4,21 +4,17 @@ var express = require('express');
 var controller = require('./fs.controller');
 
 var router = express.Router();
-//var auth = require('../../auth/auth.service');
-
-router.get('/', controller.index);
 
 /**
  * Workspace
  */
-router.get('/:workspace', controller.getFilesInWorkspace);
-router.post('/:workspace', controller.createWorkspace);
+router.get('/', controller.getFilesInWorkspace);
 
 /**
  * Files
  */
-router.get('/:workspace/:file', controller.getFile);
-router.post('/:workspace/:file', controller.createFile);
-router.put('/:workspace/:file', controller.updateFile);
+router.get('/:file', controller.getFile);
+router.post('/:file', controller.createFile);
+router.put('/:file', controller.updateFile);
 
 module.exports = router;
