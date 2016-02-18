@@ -3,6 +3,8 @@
  */
 
 var fs = require('fs');
+var yaml = require('yaml-js');
+var json2yaml = require('json2yaml');
 var path = require('path');
 var q = require('q');
 var mkdirp = require('mkdirp');
@@ -32,16 +34,24 @@ module.exports = {
         return deferred.promise;
     },
 
-    readFile: function (path) {
+    readFile: function (dirPath) {
         var deferred = q.defer();
 
-        this.checkExsits(path)
+        this.checkExsits(dirPath)
             .then(function () {
-                fs.readFile(path, "utf-8", function (err, file) {
+                fs.readFile(dirPath, "utf-8", function (err, file) {
 
                     if(err) {
                         Error.handle(err);
                         deferred.reject(err);
+                    }
+
+                    var extension = path.extname(dirPath);
+                    if(extension === '.yaml') {
+
+                        var yamlFile = yaml.load(file);
+                        var jsonString = JSON.stringify(yamlFile, null, 4);
+                        deferred.resolve(jsonString);
                     }
 
                     deferred.resolve(file);
@@ -116,7 +126,7 @@ module.exports = {
                 .then(function () {
                     deferred.reject('Workspace already exists.');
                 }, function () {
-                    
+
                     //doesnt exist
                     mkdirp(path, function (err) {
                         if (err) {
@@ -184,6 +194,13 @@ module.exports = {
 
         this.truncate(fileName)
             .then(function () {
+
+                var extension = path.extname(fileName);
+                if(extension === '.yaml') {
+                    var yamlText = json2yaml.stringify(JSON.parse(content));
+                    return _self.createFile(fileName, yamlText);
+                }
+
                 return _self.createFile(fileName, content);
             })
             .then(function () {
