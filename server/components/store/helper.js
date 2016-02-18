@@ -9,13 +9,16 @@ var mkdirp = require('mkdirp');
 var dir = require('node-dir');
 var Error = require('../errors');
 
+var config = require('../../config/environment');
+var workingDir = config.store.path;
+
 module.exports = {
 
-    checkExsits: function (path) {
+    checkExsits: function (filePath) {
         var deferred = q.defer();
 
-        if (typeof path === 'string' ) {
-            fs.exists(path, function (exists) {
+        if (typeof filePath === 'string' ) {
+            fs.exists(filePath, function (exists) {
 
                 return exists ? deferred.resolve(exists) : deferred.reject({
                     message: 'File doesn\'t exist.',
@@ -56,21 +59,23 @@ module.exports = {
 
         this.checkExsits(dirPath)
             .then(function () {
-                dir.paths(dirPath, function(err, paths) {
+                dir.files(dirPath, function(err, files) {
                     if (err) {
                         Error.handle(err);
                         return deferred.reject(reason);
                     }
 
-                    paths.files = paths.files.map(function(file) {
+                    files = files.map(function(file) {
+
                         return {
-                            path: file,
+                            name: path.basename(file),
                             type: path.extname(file),
-                            name: path.basename(file)
+                            // so the frontend always has relative path to working directory
+                            path: path.relative(path.resolve(workingDir), file)
                         }
                     });
 
-                    deferred.resolve(paths);
+                    deferred.resolve(files);
                 });
             })
             .catch(function (err) {
@@ -133,20 +138,21 @@ module.exports = {
         return deferred.promise;
     },
 
-    createFile: function (fileName, content) {
+    createFile: function (filePath, content) {
         var deferred = q.defer();
 
-        if (fileName) {
+        if (filePath) {
 
-            fs.writeFile(fileName, content || '', function(err) {
+            fs.writeFile(filePath, content || '', function(err) {
                 if(err) {
                     Error.handle(err);
                     deferred.reject(err);
                 }
 
                 deferred.resolve({
-                    name: fileName,
-                    type: path.extname(fileName),
+                    name: path.basename(filePath),
+                    type: path.extname(filePath),
+                    path: path.relative(path.resolve(workingDir), filePath),
                     content: content || ''
                 });
             });

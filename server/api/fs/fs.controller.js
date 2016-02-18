@@ -2,23 +2,10 @@
 
 var Store = require('../../components/store');
 
-exports.index = function (req, res) {
-    
-    Store.getFiles().then(function (paths) {
-        return res.json({
-            paths: paths
-        });
-    }).catch(function (err) {
-        handleError(res, err);
-    });
-};
-
 exports.getFile = function (req, res) {
-    var workspace = req.params.workspace;
     var file = req.params.file;
 
-    Store.getFile(workspace, file).then(function (data) {
-	    
+    Store.getFile(file).then(function (data) {
         return res.json({
             content: data
         });
@@ -28,8 +15,6 @@ exports.getFile = function (req, res) {
 };
 
 exports.getFilesInWorkspace = function (req, res) {
-    var workspace = req.params.workspace;
-
     Store.getFiles().then(function (paths) {
         return res.json({
             paths: paths
@@ -70,10 +55,9 @@ exports.updateFile = function (req, res) {
 };
 
 exports.createFile = function (req, res) {
-    var workspace = req.params.workspace;
     var file = req.params.file;
 
-    Store.createFile(workspace, file).then(function (file) {
+    Store.createFile(file).then(function (file) {
 
         return res.json({
             message: 'File created successfully.',

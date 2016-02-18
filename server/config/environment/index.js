@@ -43,7 +43,7 @@ var all = {
     },
 
     store: {
-        path: process.env.WORKING_DIR || '/data/cottontail/fs/'
+        path: process.env.WORKING_DIR
     },
 
     // Should we populate the DB with sample data?

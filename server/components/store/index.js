@@ -3,18 +3,16 @@
  */
 var helper = require('./helper');
 var config = require('../../config/environment');
+var path = require('path');
 var dir = config.store.path;
-var Q = require('q');
-
-if (dir.charAt(dir.length - 1) !== '/') {
-    dir = dir + '/';
-}
+dir = path.resolve(dir);
 
 module.exports = {
     fs: helper,
 
     getFile: function (file) {
-        return helper.readFile(dir + '/' + file);
+        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        return helper.readFile(file);
     },
 
     getFiles: function () {
@@ -30,10 +28,12 @@ module.exports = {
     },
 
     createFile: function (file) {
-        return helper.createFile(dir + '/' + file);
+        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        return helper.createFile(file);
     },
 
     writeFile: function (file, content) {
-        return helper.overwrite(dir + '/' + file, content);
+        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        return helper.overwrite(file, content);
     }
 };
