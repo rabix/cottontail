@@ -24,22 +24,6 @@ exports.getFilesInWorkspace = function (req, res) {
     });
 };
 
-exports.createWorkspace = function (req, res) {
-    var name = req.params.workspace;
-
-    console.log(name);
-    
-    Store.createWorkspace(name).then(function (ws) {
-        console.log(ws);
-
-        return res.json({
-            message: 'Workspace successfully created.'
-        });
-    }).catch(function (err) {
-        handleError(res, err);
-    });
-};
-
 exports.updateFile = function (req, res) {
     var file = req.params.file;
 

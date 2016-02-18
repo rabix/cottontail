@@ -9,7 +9,6 @@ var router = express.Router();
  * Workspace
  */
 router.get('/', controller.getFilesInWorkspace);
-router.post('/', controller.createWorkspace);
 
 /**
  * Files
