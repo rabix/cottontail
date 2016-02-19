@@ -6,6 +6,7 @@
     "cottontail": "cli/index.js"
   },
   "dependencies": {
+    "async": "^1.5.2",
     "body-parser": "~1.5.0",
     "chalk": "^1.1.1",
     "commander": "^2.8.1",

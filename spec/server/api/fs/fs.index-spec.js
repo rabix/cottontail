@@ -53,8 +53,8 @@ describe('fs api', function () {
     });
 
     describe('GET /api/fs route', function() {
-        it('should respond with JSON array containing workspaces when getWorkspaces succeeds', function(done) {
-            spyOn(Store, "getWorkspaces").and.callFake(function() {
+        it('should respond with JSON array containing workspaces when getDir succeeds', function(done) {
+            spyOn(Store, "getDir").and.callFake(function() {
                 var deferred = q.defer();
                 deferred.resolve(['a','b','c']);
                 return deferred.promise;
@@ -67,8 +67,8 @@ describe('fs api', function () {
                 }, done);
         });
 
-        it('should respond error message when getWorkspaces fails', function(done) {
-            spyOn(Store, "getWorkspaces").and.callFake(function() {
+        it('should respond error message when getDir fails', function(done) {
+            spyOn(Store, "getDir").and.callFake(function() {
                 var deferred = q.defer();
                 deferred.reject('failed message');
                 return deferred.promise;

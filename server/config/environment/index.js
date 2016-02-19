@@ -39,11 +39,11 @@ var all = {
     ip: process.env.IP || '0.0.0.0',
 
     logging: {
-        path: '/data/log/cottontail'
+        path: './log'
     },
 
     store: {
-        path: process.env.WORKING_DIR || '/data/cottontail/fs/'
+        path: process.env.WORKING_DIR
     },
 
     // Should we populate the DB with sample data?
