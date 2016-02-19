@@ -19,6 +19,10 @@ module.exports = {
         return helper.readWorkspace(dir);
     },
 
+    getCWLToolbox: function () {
+        return helper.readCWLFiles(dir);
+    },
+
     getDir: function () {
         return helper.readDir(dir);
     },

@@ -14,6 +14,16 @@ exports.getFile = function (req, res) {
     });
 };
 
+exports.getCWLToolbox = function(req, res) {
+    Store.getCWLToolbox().then(function(tools) {
+        return res.json({
+            tools: tools
+        });
+    }).catch(function(err) {
+        handleError(res, err);
+    })
+};
+
 exports.getFilesInWorkspace = function (req, res) {
     Store.getFiles().then(function (paths) {
         return res.json({

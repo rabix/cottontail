@@ -11,6 +11,11 @@ var router = express.Router();
 router.get('/', controller.getFilesInWorkspace);
 
 /**
+ * Toolbox
+ */
+router.get('/toolbox', controller.getCWLToolbox);
+
+/**
  * Files
  */
 router.get('/:file', controller.getFile);
