@@ -8,6 +8,7 @@
 module.exports = {
     DOMAIN: 'http://localhost:9000',
     SESSION_SECRET: 'cottontail-secret',
+    NODE_ENV: 'development',
 
     FACEBOOK_ID: 'app-id',
     FACEBOOK_SECRET: 'secret',
@@ -20,10 +21,11 @@ module.exports = {
 
     GITHUB_ID: 'app-id',
     GITHUB_SECRET: 'secret',
-    GUTHUB_SCOPE: 'user',
+    GITHUB_SCOPE: 'user',
 
 
     STRATEGY: 'local',
     // Control debug level for modules using visionmedia/debug
-    DEBUG: ''
+    DEBUG_LEVEL: '',
+    DEBUG: true
 };

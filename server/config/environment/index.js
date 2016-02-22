@@ -2,18 +2,15 @@
 
 var path = require('path');
 var _ = require('lodash');
-var minimist = require('minimist');
-
-// dont nees first two args since they are node and app.js
-var args = minimist(process.argv.slice(2));
-var configFile = _.find(args, function (value, arg) {
-    return arg === 'c' || arg === 'config';
-});
-
-var _confPath = configFile || '../local.env';
+var _confPath = '../local.env';
 var _conf = require(_confPath) || {};
+// Need to do this for working DIR to get priority if run from certain location with ('.')
+// Because it gets overrided from config, and line of priority is User set > config set > default
+var processCopy = {
+    WORKING_DIR: process.env.WORKING_DIR || _conf.WORKING_DIR
+};
 
-_.extend(process.env, _conf);
+process.env = _.assign(process.env, _conf, processCopy);
 
 function requiredProcessEnv(name) {
     if (!process.env[name]) {
@@ -30,6 +27,8 @@ var all = {
     // cottontail instance strategy
     strategy: process.env.STRATEGY || 'git',
 
+    debug: process.env.DEBUG || true,
+
     // Root path of server
     root: path.normalize(__dirname + '/../../..'),
 
@@ -40,11 +39,11 @@ var all = {
     ip: process.env.IP || '0.0.0.0',
 
     logging: {
-        path: '/data/log/cottontail'
+        path: './log'
     },
 
     store: {
-        path: process.env.STORE_PATH || '/data/cottontail/fs/'
+        path: process.env.WORKING_DIR
     },
 
     // Should we populate the DB with sample data?

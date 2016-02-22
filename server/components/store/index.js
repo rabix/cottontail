@@ -3,38 +3,41 @@
  */
 var helper = require('./helper');
 var config = require('../../config/environment');
+var path = require('path');
 var dir = config.store.path;
-var Q = require('q');
-
-if (dir.charAt(dir.length - 1) !== '/') {
-    dir = dir + '/';
-}
+dir = path.resolve(dir);
 
 module.exports = {
-
     fs: helper,
 
-    getFile: function (workspace, file) {
-        return this.fs.readFile(dir + workspace + '/' + file);
+    getFile: function (file) {
+        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        return helper.readFile(file);
     },
 
-    getFiles: function (workspace) {
-        return this.fs.readWorkspace(dir + workspace);
+    getFiles: function () {
+        return helper.readWorkspace(dir);
     },
 
-    getWorkspaces: function (path) {
-        return this.fs.readDir(dir + path);
+    getCWLToolbox: function () {
+        return helper.readCWLFiles(dir);
+    },
+
+    getDir: function () {
+        return helper.readDir(dir);
     },
 
     createWorkspace: function (name) {
-        return this.fs.mkdir(dir + name);
+        return helper.mkdir(dir + name);
     },
 
-    createFile: function (workspace, file, content) {
-        return this.fs.createFile(dir + workspace + '/' + file);
+    createFile: function (file) {
+        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        return helper.createFile(file);
     },
 
-    writeFile: function (workspace, file, content) {
-        this.fs.overwrite(dir + workspace + '/' + file, content);
+    writeFile: function (file, content) {
+        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        return helper.overwrite(file, content);
     }
 };
