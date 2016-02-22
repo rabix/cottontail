@@ -26,7 +26,8 @@ function makeBaseFile(file) {
         name: path.basename(file),
         type: path.extname(file),
         // so the frontend always has relative path to working directory
-        path: path.relative(path.resolve(workingDir), file)
+        path: path.relative(path.resolve(workingDir), file),
+        fullPath: path.resolve(workingDir, file)
     };
 }
 
