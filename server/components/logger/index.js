@@ -38,7 +38,7 @@ var logger = new (winston.Logger)({
     exitOnError: false
 });
 
-if (config.env && config.env !== 'production') {
+if (config.debug) {
     logger.add(winston.transports.Console, {
         json: false,
         timestamp: true,

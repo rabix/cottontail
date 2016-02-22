@@ -4,22 +4,22 @@ var express = require('express');
 var controller = require('./fs.controller');
 
 var router = express.Router();
-var auth = require('../../auth/auth.service');
-
-router.get('/', auth.isAuthenticated(), controller.index);
 
 /**
  * Workspace
  */
-router.get('/:workspace', auth.isAuthenticated(), controller.getFilesInWorkspace);
-router.post('/:workspace', auth.isAuthenticated(), controller.createWorkspace);
+router.get('/', controller.getFilesInWorkspace);
+
+/**
+ * Toolbox
+ */
+router.get('/toolbox', controller.getCWLToolbox);
 
 /**
  * Files
  */
-router.get('/:workspace/:file', auth.isAuthenticated(), controller.getFile);
-router.post('/:workspace/:file', auth.isAuthenticated(), controller.createFile);
-router.put('/:workspace/:file', auth.isAuthenticated(), controller.updateFile);
-
+router.get('/:file', controller.getFile);
+router.post('/:file', controller.createFile);
+router.put('/:file', controller.updateFile);
 
 module.exports = router;
