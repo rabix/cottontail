@@ -1,5 +1,9 @@
-node post-install.js
+#!/bin/bash
+
+npm install
 cd client
 npm install
-bower install
-gulp build
+cd src/editors
+npm install
+grunt sass
+grunt templates
