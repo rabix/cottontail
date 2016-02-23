@@ -35,7 +35,8 @@ var getQuestions = function (conf) {
         {
             name: 'NODE_ENV',
             message: 'Set node env: (NOTE: change this only if you want to develop Cottontail)',
-            default: 'production'
+            type: 'list',
+            choices: ['production', 'development']
         },
         {
             name: 'WORKING_DIR',

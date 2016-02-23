@@ -10,7 +10,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var validationComponent = require('./components/validation');
 
 /* The path argument needs to be set before the environment config is loaded */
-if (typeof processs.argv[2] !== 'undefined') {
+if (typeof process.argv[2] !== 'undefined') {
     var pathArgument = process.argv[2];
     validationComponent.validateWorkingDir(pathArgument);
     process.env.WORKING_DIR = pathArgument;

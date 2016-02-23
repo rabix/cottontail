@@ -7,6 +7,7 @@
 
 module.exports = {
     NODE_ENV: <NODE_ENV>,
+    WORKING_DIR: <WORKING_DIR>,
 
     GITHUB_ID: <GITHUB_ID>,
     GITHUB_SECRET: <GITHUB_SECRET>,
