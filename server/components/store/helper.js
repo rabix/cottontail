@@ -140,6 +140,7 @@ module.exports = {
                         Error.handle(err);
                         return deferred.reject(err);
                     }
+
                     async.map(files, function(file, callback) {
 
                         if (path.extname(file) !== '.json') {
@@ -151,8 +152,10 @@ module.exports = {
                         });
 
                         var found = false;
+
                         lineReader.on('line', function(line) {
                             var baseFile;
+
                             if (/^(\s{0,4}|\t?)("class": "Workflow")/.test(line)) {
                                 found = true;
                                 baseFile = makeBaseFile(file);
@@ -172,7 +175,9 @@ module.exports = {
                                 return callback(null, null);
                             }
                         });
+
                     }, function(err, results) {
+
                         if (err) {
                             Error.handle(err);
                             deferred.reject(err);
@@ -181,6 +186,7 @@ module.exports = {
                         var filteredResults = results.filter(function(file) {
                             return file !== null;
                         });
+
                         deferred.resolve(filteredResults);
                     });
                 });

@@ -14,8 +14,8 @@ if (typeof process.argv[2] !== 'undefined') {
     var pathArgument = process.argv[2];
     validationComponent.validateWorkingDir(pathArgument);
     process.env.WORKING_DIR = pathArgument;
+    console.log('WORKING_DIR is '+ process.env.WORKING_DIR);
 }
-console.log('WORKING_DIR is '+ process.env.WORKING_DIR);
 
 var _ = require('lodash');
 var Store = require('./components/store');

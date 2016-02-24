@@ -9,6 +9,7 @@ module.exports = {
     DOMAIN: 'http://localhost:9000',
     SESSION_SECRET: 'cottontail-secret',
     NODE_ENV: 'development',
+    WORKING_DIR: '/data/cottontail/fs',
 
     FACEBOOK_ID: 'app-id',
     FACEBOOK_SECRET: 'secret',
