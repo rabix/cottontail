@@ -7,6 +7,9 @@ var path = require('path');
 var dir = config.store.path;
 dir = path.resolve(dir);
 
+
+console.log('Store dir', dir);
+
 module.exports = {
     fs: helper,
 
