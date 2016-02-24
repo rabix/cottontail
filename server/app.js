@@ -10,9 +10,11 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var validationComponent = require('./components/validation');
 
 /* The path argument needs to be set before the environment config is loaded */
-var pathArgument = process.argv[2];
-validationComponent.validateWorkingDir(pathArgument);
-process.env.WORKING_DIR = pathArgument;
+if (typeof process.argv[2] !== 'undefined') {
+    var pathArgument = process.argv[2];
+    validationComponent.validateWorkingDir(pathArgument);
+    process.env.WORKING_DIR = pathArgument;
+}
 console.log('WORKING_DIR is '+ process.env.WORKING_DIR);
 
 var _ = require('lodash');
@@ -98,5 +100,5 @@ app.use(function (err, req, res, next) {
 });
 
 // Expose app
-exports = module.exports = app;
+module.exports = app;
 

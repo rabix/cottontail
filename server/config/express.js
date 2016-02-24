@@ -38,7 +38,7 @@ if (config.strategy !== 'local') {
     });
 }
 
-module.exports = function(app) {
+module.exports = function (app) {
     var env = app.get('env');
 
     app.set('views', config.root + '/server/views');
@@ -50,7 +50,7 @@ module.exports = function(app) {
     app.use(methodOverride());
     app.use(cookieParser());
 
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
 
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept');
@@ -87,10 +87,11 @@ module.exports = function(app) {
     // Logs requests to stdout
     app.use(morgan({
         format: 'dev',
-        'stream': {
-            write: function(str) {
+        stream: {
+            write: function (str) {
                 winston.info(str);
             }
-        }    }));
+        }
+    }));
 
 };

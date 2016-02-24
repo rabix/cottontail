@@ -39,7 +39,7 @@ var all = {
     ip: process.env.IP || '0.0.0.0',
 
     logging: {
-        path: './log'
+        path: '/data/log/cottontail'
     },
 
     store: {
