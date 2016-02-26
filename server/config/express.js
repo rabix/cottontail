@@ -65,11 +65,15 @@ module.exports = function (app) {
     // We need to enable sessions for passport twitter because its an oauth 1.0 strategy
     app.use(session(sessionConfig));
 
-    //if ('production' === env) {
-    //    app.use(favicon(path.join(config.root, config.clientPath, 'favicon.ico')));
-    //    app.use(express.static(path.join(config.root, config.clientPath)));
-    //    app.set('appPath', path.join(config.root, config.clientPath));
-    //}
+    if ('production' === env) {
+        // served by gulp
+        app.use(express.static(path.join(config.root, 'client/dist')));
+        // the source root
+        app.use(express.static(path.join(config.root, 'client/src')));
+        // bower components
+        app.use('/bower_components', express.static(path.join(config.root, 'client/bower_components')));
+        app.set('appPath', path.join(config.root, 'client'));
+    }
 
     if ('development' === env || 'test' === env) {
         app.use(require('connect-livereload')());
@@ -78,7 +82,7 @@ module.exports = function (app) {
         app.use(express.static(path.join(config.root, 'client/.tmp/serve')));
         // the source root
         app.use(express.static(path.join(config.root, 'client/src')));
-        // bower componenets
+        // bower components
         app.use('/bower_components', express.static(path.join(config.root, 'client/bower_components')));
         app.set('appPath', path.join(config.root, 'client'));
     }
