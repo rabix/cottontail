@@ -6,6 +6,8 @@
 // You will need to set these on the server you deploy to.
 
 module.exports = {
+
+    DOMAIN: 'http://localhost:<PORT>',
     NODE_ENV: <NODE_ENV>,
     WORKING_DIR: <WORKING_DIR>,
 

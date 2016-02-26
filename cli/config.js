@@ -68,9 +68,11 @@ var create = function (conf, root, callback) {
         conf['STRATEGY'] = conf['STRATEGY'] || 'local';
         conf['DEBUG_LEVEL'] = conf['DEBUG_LEVEL'] || '';
         conf['DEBUG'] = typeof conf['DEBUG'] === 'undefined' ? 'true' : conf['DEBUG'].toString();
+        conf['PORT'] = conf['NODE_ENV'] === 'production' ? '8080' : '9000';
 
         // Do the replace
         data = data.replace(/<NODE_ENV>/g, "'" + conf['NODE_ENV'] + "'");
+        data = data.replace(/<PORT>/g, "'" + conf['PORT'] + "'");
         data = data.replace(/<WORKING_DIR>/g, "'" + conf['WORKING_DIR'] + "'");
         data = data.replace(/<GITHUB_ID>/g, "'" + conf['GITHUB_ID'] + "'");
         data = data.replace(/<GITHUB_SECRET>/g, "'" + conf['GITHUB_SECRET'] + "'");
