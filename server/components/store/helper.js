@@ -97,7 +97,10 @@ module.exports = {
                         return makeBaseFile(file);
                     });
 
-                    deferred.resolve(files);
+                    deferred.resolve({
+                        baseDir: dirPath,
+                        files: files
+                    });
                 });
             })
             .catch(function(err) {

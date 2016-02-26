@@ -25,9 +25,10 @@ exports.getCWLToolbox = function(req, res) {
 };
 
 exports.getFilesInWorkspace = function (req, res) {
-    Store.getFiles().then(function (paths) {
+    Store.getFiles().then(function (storeResult) {
         return res.json({
-            paths: paths
+            baseDir: storeResult.baseDir,
+            paths: storeResult.files
         });
     }).catch(function (err) {
         handleError(res, err);
