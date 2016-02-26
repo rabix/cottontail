@@ -212,9 +212,9 @@ var commands = {
         process.exit(0);
     },
 
-    c: function () {
-        return this.close();
-    },
+    //c: function () {
+    //    return this.close();
+    //},
 
     end: function () {
         return this.close();

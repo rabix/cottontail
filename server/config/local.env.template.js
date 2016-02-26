@@ -7,7 +7,7 @@
 
 module.exports = {
 
-    DOMAIN: 'http://localhost:<PORT>',
+    DOMAIN: <DOMAIN>,
     NODE_ENV: <NODE_ENV>,
     WORKING_DIR: <WORKING_DIR>,
 
