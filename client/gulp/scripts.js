@@ -48,7 +48,7 @@ function webpack(watch, callback) {
     var webpackOptions = {
         watch: watch,
         module: {
-           // preLoaders: [{test: /\.js$/, exclude: /node_modules/, loader: 'jshint-loader'}],
+            // preLoaders: [{test: /\.js$/, exclude: /node_modules/, loader: 'jshint-loader'}],
             loaders: [
                 {test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader'}]
         },
@@ -78,9 +78,6 @@ function webpack(watch, callback) {
     };
 
 
-
-
-
    return gulp.src([
            path.join(conf.paths.src, '/app/**/*.js'),
 
@@ -91,11 +88,8 @@ function webpack(watch, callback) {
 
            path.join(conf.paths.src, '/editors/app/vendor/chronicle/chronicle.js'),
            path.join(conf.paths.src, '/editors/app/vendor/angular-ui-sortable/sortable.min.js'),
-           path.join(conf.paths.src, '/editors/app/vendor/jsandbox/min/jsandbox.min.js'),
 
-           path.join(conf.paths.tmp, '/conf/*.js'),
-           '!' + path.join(conf.paths.src, '/app/**/*.spec.js'),
-           '!' + path.join(conf.paths.src, '/app/**/_*.js'),
+           path.join(conf.paths.src, '/editors/app/vendor/jsandbox/src/jsandbox.js'),
 
            path.join(conf.paths.tmp, '/conf/*.js'),
            '!' + path.join(conf.paths.src, '/app/**/*.spec.js'),
