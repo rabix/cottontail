@@ -20,27 +20,29 @@ var exec = require('child_process').exec;
 var _postConfigPhase = function (callback) {
 
     console.log(chalk.green('Running frontend build to apply config changes...'));
-    process.chdir(__dirname + '/../client');
-
-    var child = exec('gulp build');
-
-    //child.stdout.on('data', function(data) {
-    //    //console.error(data);
-    //    // do nothing we wont cluter user stdout with fe build
+    //process.chdir(__dirname + '/../client');
+    //
+    //var child = exec('gulp build');
+    //
+    ////child.stdout.on('data', function(data) {
+    ////    //console.error(data);
+    ////    // do nothing we wont cluter user stdout with fe build
+    ////});
+    ////
+    //child.stderr.on('data', function(data) {
+    //    console.error('Error During frontend build: ', data);
     //});
     //
-    child.stderr.on('data', function(data) {
-        console.error('Error During frontend build: ', data);
-    });
+    //child.on('close', function() {
+    //    console.log('Applied config change to frontend.');
+    //
+    //    if (typeof callback === 'function') {
+    //        callback();
+    //    }
+    //
+    //});
 
-    child.on('close', function() {
-        console.log('Applied config change to frontend.');
-
-        if (typeof callback === 'function') {
-            callback();
-        }
-
-    });
+    callback();
 
 };
 
