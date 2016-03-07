@@ -4,6 +4,8 @@
 var helper = require('./helper');
 var config = require('../../config/environment');
 var path = require('path');
+// have to do this because path.isAbsoulte is feature not support in all envs of node
+var pathIsAbsolute = require('path-is-absolute');
 var dir = config.store.path;
 dir = path.resolve(dir);
 
@@ -14,7 +16,7 @@ module.exports = {
     fs: helper,
 
     getFile: function (file) {
-        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        file = pathIsAbsolute(file) ? file : path.resolve(dir, file);
         return helper.readFile(file);
     },
 
@@ -35,12 +37,12 @@ module.exports = {
     },
 
     createFile: function (file) {
-        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        file = pathIsAbsolute(file) ? file : path.resolve(dir, file);
         return helper.createFile(file);
     },
 
     writeFile: function (file, content) {
-        file = path.isAbsolute(file) ? file : path.resolve(dir, file);
+        file = pathIsAbsolute(file) ? file : path.resolve(dir, file);
         return helper.overwrite(file, content);
     }
 };
