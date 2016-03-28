@@ -24,23 +24,6 @@ var config = require('./config/environment');
 var logger = require('./components/logger');
 var bodyParser = require('body-parser');
 
-if (config.strategy !== 'local') {
-    // Connect to database only if strategy is different then local
-    var mongoose = require('mongoose');
-
-    mongoose.connect(config.mongo.uri, config.mongo.options);
-    mongoose.connection.on('error', function (err) {
-            console.error('MongoDB connection error: ' + err);
-            process.exit(-1);
-        }
-    );
-}
-
-// Populate DB with sample data
-if (config.seedDB && config.strategy !== 'local') {
-    require('./config/seed');
-}
-
 if (config.strategy === 'local') {
     var dir = config.store.path;
 
@@ -61,18 +44,17 @@ var app = express();
 app.use(bodyParser.json({limit: '50mb'}));
 
 var server = require('http').createServer(app);
-//var socketio = require('socket.io')(server, {
-//    serveClient: config.env !== 'production',
-//    path: '/socket.io-client'
-//});
 
-//require('./config/socketio')(socketio);
 require('./config/express')(app);
 require('./routes')(app);
 
 // Start server
 server.listen(config.port, config.ip, function () {
-    console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
+    const address = `http://${config.host}:${config.port}`;
+    if(config.openBrowser){
+        require('open')(address);
+    }
+    console.log('Express server listening on %s, in %s mode', address, app.get('env'));
 });
 
 /**
