@@ -49,12 +49,7 @@ var app = express();
 app.use(bodyParser.json({limit: '50mb'}));
 
 var server = require('http').createServer(app);
-//var socketio = require('socket.io')(server, {
-//    serveClient: config.env !== 'production',
-//    path: '/socket.io-client'
-//});
 
-//require('./config/socketio')(socketio);
 require('./config/express')(app);
 require('./routes')(app);
 

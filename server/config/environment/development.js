@@ -7,9 +7,9 @@ module.exports = {
     clientPath: 'client/.tmp/serve',
 
     // MongoDB connection options
-    mongo: {
-        uri: 'mongodb://localhost/cottontail-dev'
-    },
+    // mongo: {
+    //     uri: 'mongodb://localhost/cottontail-dev'
+    // },
 
-    seedDB: true
+    // seedDB: true
 };

@@ -14,7 +14,6 @@ var cookieParser = require('cookie-parser');
 var errorHandler = require('errorhandler');
 var path = require('path');
 var config = require('./environment');
-var passport = require('passport');
 var session = require('express-session');
 var winston = require('../components/logger');
 
@@ -48,11 +47,6 @@ module.exports = function (app) {
         next();
     });
 
-
-    app.use(passport.initialize());
-
-    // Persist sessions with mongoStore
-    // We need to enable sessions for passport twitter because its an oauth 1.0 strategy
     app.use(session(sessionConfig));
 
     if ('production' === env) {
