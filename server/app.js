@@ -24,18 +24,6 @@ var config = require('./config/environment');
 var logger = require('./components/logger');
 var bodyParser = require('body-parser');
 
-if (config.strategy !== 'local') {
-    // Connect to database only if strategy is different then local
-    var mongoose = require('mongoose');
-
-    mongoose.connect(config.mongo.uri, config.mongo.options);
-    mongoose.connection.on('error', function (err) {
-            console.error('MongoDB connection error: ' + err);
-            process.exit(-1);
-        }
-    );
-}
-
 // Populate DB with sample data
 if (config.seedDB && config.strategy !== 'local') {
     require('./config/seed');

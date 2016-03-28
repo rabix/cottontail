@@ -28,16 +28,6 @@ var sessionConfig = {
     saveUninitialized: true
 };
 
-if (config.strategy !== 'local') {
-    // We dont need mongo at all if we are in local mode
-    var mongoStore = require('connect-mongo')(session);
-    var mongoose = require('mongoose');
-    sessionConfig.store = new mongoStore({
-        mongooseConnection: mongoose.connection,
-        db: 'cottontail'
-    });
-}
-
 module.exports = function (app) {
     var env = app.get('env');
 
