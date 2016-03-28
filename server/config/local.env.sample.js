@@ -11,20 +11,6 @@ module.exports = {
     NODE_ENV: 'development',
     WORKING_DIR: '/data/cottontail/fs',
 
-    FACEBOOK_ID: 'app-id',
-    FACEBOOK_SECRET: 'secret',
-
-    TWITTER_ID: 'app-id',
-    TWITTER_SECRET: 'secret',
-
-    GOOGLE_ID: 'app-id',
-    GOOGLE_SECRET: 'secret',
-
-    GITHUB_ID: 'app-id',
-    GITHUB_SECRET: 'secret',
-    GITHUB_SCOPE: 'user',
-
-
     STRATEGY: 'local',
     // Control debug level for modules using visionmedia/debug
     DEBUG_LEVEL: '',
