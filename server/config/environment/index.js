@@ -21,6 +21,8 @@ function requiredProcessEnv(name) {
 
 // All configurations will extend these options
 // ============================================
+
+var rootPath = path.normalize(__dirname + '/../../..');
 var all = {
     env: process.env.NODE_ENV,
 
@@ -30,7 +32,7 @@ var all = {
     debug: process.env.DEBUG || true,
 
     // Root path of server
-    root: path.normalize(__dirname + '/../../..'),
+    root: rootPath,
 
     // Server port
     port: process.env.PORT || 9000,
@@ -39,7 +41,7 @@ var all = {
     ip: process.env.IP || '0.0.0.0',
 
     logging: {
-        path: '/data/log/cottontail'
+        path: rootPath + '/logs'
     },
 
     store: {
