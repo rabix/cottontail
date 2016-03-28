@@ -1,5 +1,6 @@
-var ConfigFile = require('../../config/local.env');
+'use strict';
+let config = require('../../config/environment/index');
 
 exports.getConfig = function (req, res) {
-    return res.json(ConfigFile);
+    return res.json(config);
 };

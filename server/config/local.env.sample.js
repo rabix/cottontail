@@ -9,7 +9,7 @@ module.exports = {
     DOMAIN: 'http://localhost:9000',
     SESSION_SECRET: 'cottontail-secret',
     NODE_ENV: 'development',
-    WORKING_DIR: '/data/cottontail/fs',
+    WORKING_DIR: '',
 
     STRATEGY: 'local',
     // Control debug level for modules using visionmedia/debug

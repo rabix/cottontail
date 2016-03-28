@@ -24,11 +24,6 @@ var config = require('./config/environment');
 var logger = require('./components/logger');
 var bodyParser = require('body-parser');
 
-// Populate DB with sample data
-if (config.seedDB && config.strategy !== 'local') {
-    require('./config/seed');
-}
-
 if (config.strategy === 'local') {
     var dir = config.store.path;
 
@@ -55,7 +50,11 @@ require('./routes')(app);
 
 // Start server
 server.listen(config.port, config.ip, function () {
-    console.log('Express server listening on %d, in %s mode', config.port, app.get('env'));
+    const address = `http://${config.host}:${config.port}`;
+    if(config.openBrowser){
+        require('open')(address);
+    }
+    console.log('Express server listening on %s, in %s mode', address, app.get('env'));
 });
 
 /**

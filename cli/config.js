@@ -8,8 +8,6 @@ var chalk = require('chalk');
 var configDir = './server/config/';
 var configTemplate = configDir + 'local.env.template.js';
 var configFile = configDir + 'local.env.js';
-var exec = require('child_process').exec;
-
 
 /**
  * Whenever config gets changed we need to rebuild Frontend to take affect
