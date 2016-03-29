@@ -1,6 +1,4 @@
-/**
- * Created by filip on 8/14/15.
- */
+'use strict';
 
 var fs = require('fs');
 var yaml = require('yaml-js');
@@ -66,8 +64,13 @@ module.exports = {
                     var extension = path.extname(dirPath);
                     if (extension === '.yaml') {
 
-                        var yamlFile = yaml.load(file);
-                        var jsonString = JSON.stringify(yamlFile, null, 4);
+                        let yamlFile = yaml.load(file);
+                        let jsonString = '';
+
+                        if (yamlFile !== null) {
+                            jsonString = JSON.stringify(yamlFile, null, 4);
+                        }
+
                         deferred.resolve(jsonString);
                     }
 
