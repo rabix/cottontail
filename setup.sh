@@ -4,7 +4,7 @@ cd client
 npm install # postInstall will do `bower install`
 
 cd src
-git clone git@github.com:rabix/cottontail-editors.git editors
+git clone https://github.com/rabix/cottontail-editors.git editors
 cd editors
 npm install # postInstall will do `bower install`
 grunt templates && grunt sass && grunt build
