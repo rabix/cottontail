@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 /**
  * Main application file
  */

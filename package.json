@@ -1,9 +1,9 @@
 {
   "name": "cottontail",
   "version": "0.0.2",
-  "main": "cli/index.js",
+  "main": "server/app.js",
   "bin": {
-    "cottontail": "cli/index.js"
+    "cottontail": "server/app.js"
   },
   "dependencies": {
     "async": "^1.5.2",
@@ -62,7 +62,8 @@
   },
   "scripts": {
     "start": "node server/app.js",
-    "test": "./node_modules/.bin/jasmine"
+    "test": "./node_modules/.bin/jasmine",
+    "package": "./cli/pack.sh"
   },
   "private": true
 }
