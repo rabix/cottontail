@@ -1,30 +1,46 @@
-/**
- * Created by filip on 7.8.15..
- */
-
 'use strict';
 
-var winston = require('winston');
-var path = require('path');
-var config = require('../../config/environment');
+let winston = require('winston');
+let winstonGraylog2 = require('winston-graylog2');
+let path = require('path');
+let config = require('../../config/environment');
 
-var logPath = path.normalize(config.logging.path);
+let logPath = path.normalize(config.logging.path);
 
-var debugLog = logPath + '/cottontail.log';
-var exceptionLog = logPath + '/cottontail-error.log';
+let debugLog = logPath + '/cottontail.log';
+let exceptionLog = logPath + '/cottontail-error.log';
 
-var timeFormatFn = function () {
+let timeFormatFn = function () {
     return Date.now();
 };
 
-var logger = new (winston.Logger)({
+const graylogTransport = new (winstonGraylog2)({
+    name: 'cottontail-graylog',
+    level: 'error',
+    silent: false,
+    handleExceptions: true,
+    processMeta: function(meta){
+        // We need to clean up the personal data here
+
+        return meta;
+    },
+    graylog: {
+        servers: [{host: 'rabix.org', port: 12201}],
+        facility: 'Cottontail',
+        bufferSize: 1400,
+        hostname: 'cottontail-remote-server'
+    }
+});
+
+let logger = new (winston.Logger)({
     transports: [
         new (winston.transports.DailyRotateFile)({
             filename: debugLog,
             dirname: config.logging.path,
             timestamp: timeFormatFn
         }),
-        new winston.transports.File({ filename: debugLog, json: false })
+        new winston.transports.File({filename: debugLog, json: false}),
+        graylogTransport
     ],
     exceptionHandlers: [
         new (winston.transports.DailyRotateFile)({
@@ -32,8 +48,7 @@ var logger = new (winston.Logger)({
             dirname: config.logging.path,
             timestamp: timeFormatFn
         }),
-        new (winston.transports.Console)({ json: false, timestamp: true }),
-        new winston.transports.File({ filename: exceptionLog, json: false })
+        new (winston.transports.Console)({json: false, timestamp: true})
     ],
     exitOnError: false
 });
