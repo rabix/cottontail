@@ -14,34 +14,39 @@ let timeFormatFn = function () {
     return Date.now();
 };
 
-const graylogTransport = new (winstonGraylog2)({
-    name: 'cottontail-graylog',
-    level: 'error',
-    silent: false,
-    handleExceptions: true,
-    processMeta: function(meta){
-        // We need to clean up the personal data here
+var winstonTransports = [
+    new (winston.transports.DailyRotateFile)({
+        filename: debugLog,
+        dirname: config.logging.path,
+        timestamp: timeFormatFn
+    }),
+    new winston.transports.File({filename: debugLog, json: false})
+];
 
-        return meta;
-    },
-    graylog: {
-        servers: [{host: 'rabix.org', port: 12201}],
-        facility: 'Cottontail',
-        bufferSize: 1400,
-        hostname: 'cottontail-remote-server'
-    }
-});
+if (config.reportErrors) {
+    winstonTransports.push(new (winstonGraylog2)({
+        name: 'cottontail-graylog',
+        level: 'error',
+        silent: false,
+        handleExceptions: true,
+        processMeta: function (meta) {
+            meta.cli_args = process.argv;
+            meta.node_Version = process.version;
+            meta.platform = process.platform;
+
+            return meta;
+        },
+        graylog: {
+            servers: [{host: 'rabix.org', port: 12201}],
+            facility: 'Cottontail',
+            bufferSize: 1400,
+            hostname: 'cottontail-remote-server'
+        }
+    }));
+}
 
 let logger = new (winston.Logger)({
-    transports: [
-        new (winston.transports.DailyRotateFile)({
-            filename: debugLog,
-            dirname: config.logging.path,
-            timestamp: timeFormatFn
-        }),
-        new winston.transports.File({filename: debugLog, json: false}),
-        graylogTransport
-    ],
+    transports: winstonTransports,
     exceptionHandlers: [
         new (winston.transports.DailyRotateFile)({
             filename: exceptionLog,

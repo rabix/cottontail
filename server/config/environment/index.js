@@ -46,6 +46,7 @@ let config = {
     secrets: {
         session: 'cottontail-secret'
     },
+    reportErrors: argv['error-reporting'] !== undefined ? argv['error-reporting'] : true
 };
 
 module.exports = config;

@@ -9,6 +9,9 @@ Running `npm run package` in the root project folder will produce a tarball in t
 2. Run `sudo npm link` to create the `cottontail` global symlink.
 3. Use it by running `cottontail [directory (optional)] [-o (open browser, optional)] [--port 1337 (optional)]`
 
+In order to improve our software, we may report runtime errors back to our servers.
+If you explicitly wish to disable this, you can add a `--no-error-reporting` parameter to the CLI command.
+
 ## Tests
 
 **Server tests: **
