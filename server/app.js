@@ -112,5 +112,8 @@ try {
         } else {
             throw exception;
         }
+
+    } else {
+        throw exception;
     }
 }
