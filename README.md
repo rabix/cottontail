@@ -1,16 +1,19 @@
 # Cottontail
 
+## Installation
 
-## Packaging
-Running `npm run package` in the root project folder will produce a tarball in the "release" subfolder.
+Download the tarball of the latest release on the [releases page](https://github.com/rabix/cottontail/releases).
 
-## Unpacking
 1. Either use your OS to unpack the tar, or run `tar -zxf {archive_name} -C {output_folder}`.
 2. Run `sudo npm link` to create the `cottontail` global symlink.
 3. Use it by running `cottontail [directory (optional)] [-o (open browser, optional)] [--port 1337 (optional)]`
 
 In order to improve our software, we may report runtime errors back to our servers.
 If you explicitly wish to disable this, you can add a `--no-error-reporting` parameter to the CLI command.
+
+## Packaging
+
+Running `npm run package` in the root project folder will produce a tarball in the "release" subfolder.
 
 ## Local Development
 
