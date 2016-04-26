@@ -2,14 +2,21 @@
 
 ## Installation
 
+Running cottontail requires [NodeJS 4+](https://nodejs.org/en/).
+
+
 Download the tarball of the latest release on the [releases page](https://github.com/rabix/cottontail/releases).
 
 1. Either use your OS to unpack the tar, or run `tar -zxf {archive_name} -C {output_folder}`.
-2. Run `sudo npm link` to create the `cottontail` global symlink.
+2. `cd` into the `cottontail` directory that was just created. Run `sudo npm link` to create the `cottontail` global symlink.
 3. Use it by running `cottontail [directory (optional)] [-o (open browser, optional)] [--port 1337 (optional)]`
 
 In order to improve our software, we may report runtime errors back to our servers.
 If you explicitly wish to disable this, you can add a `--no-error-reporting` parameter to the CLI command.
+
+> Some users might experience issues running `sudo npm link` on Ubuntu. If the issue is caused by kerberos, installing `libkrb5-dev` seems to solve this:
+> 
+>  `sudo apt-get install libkrb5-dev`
 
 ## Packaging
 
@@ -17,10 +24,7 @@ Running `npm run package` in the root project folder will produce a tarball in t
 
 ## Local Development
 
-Local cottontail requires the following dependencies:
-
-- [NodeJS 4+](https://nodejs.org/en/)
-- [Bower](http://bower.io/)
+Local cottontail requires [Bower](http://bower.io/).
 
 
 After cloning the repo locally, run the following commands in the root of the cottontail project:
