@@ -1,6 +1,17 @@
+var config = require('./../config/environment');
 var path = require('path');
 
+var env = config.env;
 var postSizeLimit =  10 * 1024 * 1024; // 10MB in bytes
+var appPath;
+
+if ('production' === env) {
+    appPath = path.join(config.root, 'client/dist');
+}
+
+if ('development' === env || 'test' === env) {
+    appPath = path.join(config.root, 'client/.tmp/serve');
+}
 
 module.exports = [
     {
@@ -11,8 +22,8 @@ module.exports = [
                 lookupCompressed: true,
                 redirectToSlash: true,
                 path: [
-                    path.join(__dirname, '../../../client/.tmp/serve'),
-                    path.join(__dirname, '../../../client/src')
+                    appPath,
+                    path.join(config.root, 'client/src')
                 ],
                 index: true
             }
@@ -23,7 +34,7 @@ module.exports = [
         path: '/bower_components/{path*}',
         handler: {
             directory: {
-                path: path.join(__dirname, '../../../client/bower_components')
+                path: path.join(config.root, 'client/bower_components')
             }
         }
     },
