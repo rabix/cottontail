@@ -118,7 +118,6 @@ try {
                     directory: {
                         lookupCompressed: true,
                         redirectToSlash: true,
-                        //listing: true,
                         path: [
                             path.join(__dirname, '../client/.tmp/serve'),
                             path.join(__dirname, '../client/src')
@@ -127,20 +126,12 @@ try {
                     }
                 }
             },
-            /*{
-                method: 'GET',
-                path: '/',
-                handler: function(request,reply) {
-                    reply.view('index');
-                }
-            },*/
             {
                 method: 'GET',
                 path: '/bower_components/{path*}',
                 handler: {
                     directory: {
                         path: path.join(__dirname, '../client/bower_components')
-                       // path: '../client/bower_components'
                     }
                 }
             },
@@ -158,21 +149,6 @@ try {
                 }
             }
         ]);
-
-        /*server.ext('onRequest', function (request, reply) {
-
-         // Change all requests to '/test'
-         //request.setUrl('/test');
-         var response = request.response;
-
-         if (response.header) {
-         response.header('Access-Control-Allow-Origin', '*');
-         response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept');
-         response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-         return reply.continue();
-         }
-         });*/
 
 
         server.ext('onPreResponse', function (request, reply) {
@@ -200,13 +176,7 @@ try {
                     message: response.message || 'Request parse error'
                 });
 
-                //reply.continue();
-                //return reply({error: response.message});
-
-                //reply({error: response.message});
-                /*.code(response.output.statusCode || 500)
-                 .type('application/json');*/
-
+                reply.continue();
             }
         });
 
