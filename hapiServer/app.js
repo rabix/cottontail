@@ -14,6 +14,7 @@ try {
     'use strict';
 
     var Hapi = require('hapi');
+    var path = require('path');
     
     process.env.NODE_ENV = process.env.NODE_ENV || 'development';
     var validationComponent = require('./src/services/validation');
@@ -115,9 +116,12 @@ try {
                 path: '/{path*}',
                 handler: {
                     directory: {
+                        lookupCompressed: true,
+                        redirectToSlash: true,
+                        //listing: true,
                         path: [
-                            '../client/.tmp/serve',
-                            '../client/src'
+                            path.join(__dirname, '../client/.tmp/serve'),
+                            path.join(__dirname, '../client/src')
                         ],
                         index: true
                     }
@@ -135,7 +139,8 @@ try {
                 path: '/bower_components/{path*}',
                 handler: {
                     directory: {
-                        path: '../client/bower_components'
+                        path: path.join(__dirname, '../client/bower_components')
+                       // path: '../client/bower_components'
                     }
                 }
             },
