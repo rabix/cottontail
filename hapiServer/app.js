@@ -56,8 +56,7 @@ try {
         host: config.host,
         port: config.port
     });
-
-
+    
     var goodOptions = {
         reporters: [{
             reporter: require('good-console'),
@@ -96,113 +95,136 @@ try {
         {
             register: require('good'),
             options: goodOptions
+        },{
+            register: require('vision'),
+            options: {}
         }
     ], function(err) {
         if (err) {
             console.log('Failed loading the plugin: ' + err);
         }
-    });
 
-    server.route([
-        {
-            method: 'GET',
-            path: '/{path*}',
-            handler : {
-                directory: {
-                    path: [
-                        '../client/.tmp/serve',
-                        '../client/src'
-                    ],
-                    index: true
+        server.views({
+            engines: { html: require('handlebars') },
+            path: __dirname + './../client/.tmp/serve'
+        });
+        
+        server.route([
+            {
+                method: 'GET',
+                path: '/{path*}',
+                handler: {
+                    directory: {
+                        path: [
+                            '../client/.tmp/serve',
+                            '../client/src'
+                        ],
+                        index: true
+                    }
                 }
-            }
-        },
-        {
-            method: 'GET',
-            path: '/bower_components/{path*}',
-            handler : {
-                directory: {
-                    path: '../client/bower_components'
-                }
-            }
-        },
-        {
-            method: 'POST',
-            path: '/{path*}',
-            handler: function(request, reply) {
-                reply();
             },
-            config: {
-                payload: {
-                    parse: true,
-                    maxBytes: postSizeLimit
+            /*{
+                method: 'GET',
+                path: '/',
+                handler: function(request,reply) {
+                    reply.view('index');
+                }
+            },*/
+            {
+                method: 'GET',
+                path: '/bower_components/{path*}',
+                handler: {
+                    directory: {
+                        path: '../client/bower_components'
+                    }
+                }
+            },
+            {
+                method: 'POST',
+                path: '/{path*}',
+                handler: function (request, reply) {
+                    reply();
+                },
+                config: {
+                    payload: {
+                        parse: true,
+                        maxBytes: postSizeLimit
+                    }
                 }
             }
-        }
-    ]);
+        ]);
 
-    /*server.ext('onRequest', function (request, reply) {
+        /*server.ext('onRequest', function (request, reply) {
 
-        // Change all requests to '/test'
-        //request.setUrl('/test');
-        var response = request.response;
+         // Change all requests to '/test'
+         //request.setUrl('/test');
+         var response = request.response;
 
-        if (response.header) {
-            response.header('Access-Control-Allow-Origin', '*');
-            response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept');
-            response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+         if (response.header) {
+         response.header('Access-Control-Allow-Origin', '*');
+         response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept');
+         response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
-            return reply.continue();
-        }
-    });*/
+         return reply.continue();
+         }
+         });*/
 
 
-    server.ext('onPreResponse', function (request, reply) {
-        var response = request.response;
+        server.ext('onPreResponse', function (request, reply) {
+            var response = request.response;
 
-        if (response.header) {
-            response.header('Access-Control-Allow-Origin', '*');
-            response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept');
-            response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+            if (response.header) {
+                response.header('Access-Control-Allow-Origin', '*');
+                response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept');
+                response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
-            //THIS WORKS reply(response);
+                //THIS WORKS
+                //reply(response);
 
-            reply.continue();
-        }
+                reply.continue();
+            }
+
+            /**
+             * All errors are intercepted here and formated
+             */
+            if (response.isBoom) {
+                console.error('Caught err: ', response.message);
+                logger.error({
+                    route: request.path,
+                    status: response.output.statusCode || 500,
+                    message: response.message || 'Request parse error'
+                });
+
+                //reply.continue();
+                //return reply({error: response.message});
+
+                //reply({error: response.message});
+                /*.code(response.output.statusCode || 500)
+                 .type('application/json');*/
+
+            }
+        });
+
+        server.on('internalerror', function(req, error) {
+            console.log('error', error);
+        });
+
 
         /**
-         * All errors are intercepted here and formated
-         */
-        if (response.isBoom) {
-            console.error('Caught err: ', response.message);
-            logger.error({
-                route: request.path,
-                status: response.output.statusCode || 500,
-                message: response.message || 'Request parse error'
-            });
+         *  Start the server */
+        server.start(function (err) {
+            if (err) {
+                throw err;
+            }
 
-            reply.continue();
-            //reply({error: response.message});
-                /*.code(response.output.statusCode || 500)
-                .type('application/json');*/
+            var address = 'http://' + config.host + ':' + config.port;
+            if (config.openBrowser) {
+                require('open')(address);
+            }
 
-        }
-    });
+            console.log('HapiJS server listening on %s, in %s mode', address, config.env);
+        });
 
-
-    /**
-     *  Start the server */
-    server.start(function(err) {
-        if (err) {
-            throw err;
-        }
-
-        var address = 'http://' + config.host + ':' + config.port;
-        if (config.openBrowser) {
-            require('open')(address);
-        }
-
-        console.log('Express server listening on %s, in %s mode', address, config.env);
     });
 
 } catch (exception) {

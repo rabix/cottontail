@@ -39,6 +39,7 @@ exports.getFilesInWorkspace = (request, reply) => {
 exports.updateFile = (request, reply) => {
     var file = request.params.file;
 
+    console.log('request ' + request.query);
     Store.writeFile(file, request.body.content).then(function (file) {
 
         return reply({
