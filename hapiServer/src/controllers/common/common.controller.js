@@ -1,6 +1,6 @@
 'use strict';
 let config = require('../../config/environment');
 
-exports.getConfig = (request, reply) => {
+exports.getConfig = function(request, reply) {
     return reply(config);
 };

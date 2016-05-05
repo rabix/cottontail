@@ -3,7 +3,7 @@
 const Boom = require('boom');
 var Store = require('../../services/store');
 
-exports.getFile = (request, reply) => {
+exports.getFile = function(request, reply) {
     var file = request.params.file;
     
     Store.getFile(file).then(function (data) {
@@ -15,7 +15,7 @@ exports.getFile = (request, reply) => {
     });
 };
 
-exports.getCWLToolbox = (request, reply) => {
+exports.getCWLToolbox = function(request, reply) {
     Store.getCWLToolbox().then(function(tools) {
         return reply({
             tools: tools
@@ -25,7 +25,7 @@ exports.getCWLToolbox = (request, reply) => {
     })
 };
 
-exports.getFilesInWorkspace = (request, reply) => {
+exports.getFilesInWorkspace = function(request, reply) {
     Store.getFiles().then(function (storeResult) {
         return reply({
             baseDir: storeResult.baseDir,
@@ -36,7 +36,7 @@ exports.getFilesInWorkspace = (request, reply) => {
     });
 };
 
-exports.updateFile = (request, reply) => {
+exports.updateFile = function(request, reply) {
     var file = request.params.file;
 
     //console.log('request ' + request.query);
@@ -51,7 +51,7 @@ exports.updateFile = (request, reply) => {
     });
 };
 
-exports.createFile = (request, reply) => {
+exports.createFile = function(request, reply) {
     var file = request.params.file;
 
     Store.createFile(file).then(function (file) {
