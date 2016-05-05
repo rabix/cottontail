@@ -14,7 +14,6 @@ try {
     'use strict';
 
     var Hapi = require('hapi');
-    var path = require('path');
     
     process.env.NODE_ENV = process.env.NODE_ENV || 'development';
     var validationComponent = require('./src/services/validation');
@@ -30,6 +29,8 @@ try {
     var Store = require('./src/services/store');
     var config = require('./src/config/environment');
     var logger = require('./src/services/logger');
+    var commonPathsRouter = require('./src/routes/commonPaths.router');
+    var plugins = require('./plugins');
 
     if (config.strategy === 'local') {
         var dir = config.store.path;
@@ -48,108 +49,22 @@ try {
 
     /**
      * Create a server with a host and port */
-    var oneMB = 1048576;
-    var postSizeLimit =  10 * oneMB;
-
     var server = new Hapi.Server();
 
     server.connection({
         host: config.host,
         port: config.port
     });
-    
-    var goodOptions = {
-        reporters: [{
-            reporter: require('good-console'),
-            events: { log: ['request'], response: '*' }
 
-        }]
-    };
 
-    /**
-     *  Register the router as a plugin so we can prefix the routes */
-    server.register([
-        {
-            register: require('./src/routes'),
-            routes: {
-                prefix: '/api'
-            }
-        }, {
-            /* Static file handler */
-            register: require('inert')
-        },
-        {
-            /* HTTP proxy */
-            register: require('h2o2')
-        },
-        {
-            /* Session */
-            register: require('yar'),
-            options: {
-                storeBlank: true,
-                cookieOptions: {
-                    password: config.secrets.session,
-                    isSecure: true
-                }
-            }
-        },
-        {
-            register: require('good'),
-            options: goodOptions
-        },{
-            register: require('vision'),
-            options: {}
-        }
-    ], function(err) {
+    /* Register the  plugins */
+    server.register(plugins, function(err) {
         if (err) {
             console.log('Failed loading the plugin: ' + err);
         }
 
-        server.views({
-            engines: { html: require('handlebars') },
-            path: __dirname + './../client/.tmp/serve'
-        });
-        
-        server.route([
-            {
-                method: 'GET',
-                path: '/{path*}',
-                handler: {
-                    directory: {
-                        lookupCompressed: true,
-                        redirectToSlash: true,
-                        path: [
-                            path.join(__dirname, '../client/.tmp/serve'),
-                            path.join(__dirname, '../client/src')
-                        ],
-                        index: true
-                    }
-                }
-            },
-            {
-                method: 'GET',
-                path: '/bower_components/{path*}',
-                handler: {
-                    directory: {
-                        path: path.join(__dirname, '../client/bower_components')
-                    }
-                }
-            },
-            {
-                method: 'POST',
-                path: '/{path*}',
-                handler: function (request, reply) {
-                    reply();
-                },
-                config: {
-                    payload: {
-                        parse: true,
-                        maxBytes: postSizeLimit
-                    }
-                }
-            }
-        ]);
-
+        /* Add common path rules */
+        server.route(commonPathsRouter);
 
         server.ext('onPreResponse', function (request, reply) {
             var response = request.response;
@@ -158,15 +73,12 @@ try {
                 response.header('Access-Control-Allow-Origin', '*');
                 response.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Authorization, Content-Type, Accept');
                 response.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-
-                //THIS WORKS
-                //reply(response);
-
+                
                 reply.continue();
             }
 
             /**
-             * All errors are intercepted here and formated
+             * All response errors are intercepted here and formatted
              */
             if (response.isBoom) {
                 console.error('Caught err: ', response.message);

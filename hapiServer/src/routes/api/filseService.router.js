@@ -1,6 +1,6 @@
 'use strict';
 
-const fsController = require('./../controllers/fs/fs.controller');
+const fsController = require('./../../controllers/fs/fs.controller');
 
 module.exports = function() {
     return [

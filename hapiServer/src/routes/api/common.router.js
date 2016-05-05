@@ -1,6 +1,6 @@
 'use strict';
 
-const commonController = require('./../controllers/common/common.controller');
+const commonController = require('./../../controllers/common/common.controller');
 
 module.exports = function() {
     return [

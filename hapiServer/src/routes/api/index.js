@@ -16,6 +16,6 @@ exports.register = function (server, options, next) {
 };
 
 exports.register.attributes = {
-    name: 'router',
+    name: 'apiRouter',
     version: '0.0.0'
 };
