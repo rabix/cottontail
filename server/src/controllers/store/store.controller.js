@@ -1,7 +1,7 @@
 /**
  * Created by filip on 8/14/15.
  */
-var helper = require('./helper');
+var helper = require('../../services/store/store.service');
 var config = require('../../config/environment');
 var path = require('path');
 // have to do this because path.isAbsoulte is feature not support in all envs of node

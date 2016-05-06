@@ -7,7 +7,7 @@ var path = require('path');
 var q = require('q');
 var mkdirp = require('mkdirp');
 var dir = require('node-dir');
-var Error = require('../errors');
+var Error = require('../errors/errors.service');
 var readline = require('readline');
 var async = require('async');
 

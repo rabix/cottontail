@@ -26,9 +26,9 @@ try {
         console.log('WORKING_DIR is ' + process.env.WORKING_DIR);
     }
 
-    var Store = require('./src/services/store');
+    var Store = require('./src/controllers/store/store.controller');
     var config = require('./src/config/environment');
-    var logger = require('./src/services/logger');
+    var logger = require('./src/services/logger/logger.service');
     var commonPathsRouter = require('./src/routes/commonPaths.router');
     var plugins = require('./plugins');
 

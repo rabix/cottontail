@@ -1,7 +1,7 @@
 'use strict';
 
 const Boom = require('boom');
-var Store = require('../../services/store');
+var Store = require('../../controllers/store/store.controller');
 
 exports.getFile = function(request, reply) {
     var file = request.params.file;
