@@ -45,6 +45,10 @@ module.exports = [
             reply();
         },
         config: {
+            cors: {
+                origin: ['*'],
+                headers: ['Access-Control-Allow-Headers', 'Access-Control-Allow-Methods']
+            },
             payload: {
                 parse: true,
                 maxBytes: postSizeLimit

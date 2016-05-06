@@ -1,7 +1,7 @@
 'use strict';
 
 const Boom = require('boom');
-var Store = require('../../services/store');
+var Store = require('../../controllers/store/store.controller');
 
 exports.getFile = function(request, reply) {
     var file = request.params.file;
@@ -39,7 +39,6 @@ exports.getFilesInWorkspace = function(request, reply) {
 exports.updateFile = function(request, reply) {
     var file = request.params.file;
 
-    //console.log('request ' + request.query);
     Store.writeFile(file, request.payload.content).then(function (file) {
 
         return reply({
@@ -67,5 +66,4 @@ exports.createFile = function(request, reply) {
 
 function handleError(reply, err) {
     return reply(Boom.wrap(error, err.status));
-    //return res.status(err.status || 500).json({error: err});
 }

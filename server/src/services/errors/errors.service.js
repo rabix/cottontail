@@ -3,7 +3,7 @@
  */
 
 'use strict';
-var logger = require('../logger');
+var logger = require('../logger/logger.service');
 
 module.exports = {
     handle: function (err) {
