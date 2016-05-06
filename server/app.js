@@ -16,7 +16,7 @@ try {
     var Hapi = require('hapi');
     
     process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-    var validationComponent = require('./src/services/validation');
+    var validationComponent = require('./src/services/validation/validation.service');
 
     /* The path argument needs to be set before the environment config is loaded */
     if (typeof process.argv[2] !== 'undefined') {
