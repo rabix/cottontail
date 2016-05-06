@@ -45,8 +45,7 @@ try {
             Logger.info('Working dir exists.');
         });
     }
-
-
+    
     /**
      * Create a server with a host and port */
     var server = new Hapi.Server();
@@ -55,8 +54,7 @@ try {
         host: config.host,
         port: config.port
     });
-
-
+    
     /* Register the  plugins */
     server.register(plugins, function(err) {
         if (err) {
