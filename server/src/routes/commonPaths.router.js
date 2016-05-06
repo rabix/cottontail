@@ -1,9 +1,10 @@
-var config = require('./../config/environment');
-var path = require('path');
+'use strict';
+const config = require('./../config/environment');
+const path = require('path');
 
-var env = config.env;
-var postSizeLimit =  10 * 1024 * 1024; // 10MB in bytes
-var appPath;
+let env = config.env;
+let postSizeLimit =  10 * 1024 * 1024; // 10MB in bytes
+let appPath;
 
 if ('production' === env) {
     appPath = path.join(config.root, 'client/dist');

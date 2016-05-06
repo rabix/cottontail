@@ -1,5 +1,4 @@
 'use strict';
-
 const fsController = require('./../../controllers/fs/fs.controller');
 
 module.exports = [
@@ -10,7 +9,9 @@ module.exports = [
         method: 'GET',
         path: '/fs',
         config : {
-            handler: fsController.getFilesInWorkspace
+            handler: function(request, reply) {
+                fsController.getFilesInWorkspace(request, reply);
+            }
         }
     },
 
@@ -21,7 +22,9 @@ module.exports = [
         method: 'GET',
         path: '/fs/toolbox',
         config : {
-            handler: fsController.getCWLToolbox
+            handler: function(request, reply) {
+                fsController.getCWLToolbox(request, reply);
+            }
         }
     },
 
@@ -32,21 +35,27 @@ module.exports = [
         method: 'GET',
         path: '/fs/{file}',
         config : {
-            handler: fsController.getFile
+            handler: function(request, reply) {
+                fsController.getFile(request, reply);
+            }
         }
     },
     {
         method: 'POST',
         path: '/fs/{file}',
         config : {
-            handler: fsController.createFile
+            handler: function(request, reply) {
+                fsController.createFile(request, reply);
+            }
         }
     },
     {
         method: 'PUT',
         path: '/fs/{file}',
         config : {
-            handler: fsController.updateFile
+            handler: function(request, reply) {
+                fsController.updateFile(request, reply);
+            }
         }
     }
 ];

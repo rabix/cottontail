@@ -1,5 +1,4 @@
 'use strict';
-
 let winston = require('winston');
 let winstonGraylog2 = require('winston-graylog2');
 let path = require('path');
@@ -14,7 +13,7 @@ let timeFormatFn = function () {
     return Date.now();
 };
 
-var winstonTransports = [
+let winstonTransports = [
     new (winston.transports.DailyRotateFile)({
         filename: debugLog,
         dirname: config.logging.path,

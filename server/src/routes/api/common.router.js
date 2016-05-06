@@ -1,5 +1,4 @@
 'use strict';
-
 const commonController = require('./../../controllers/common/common.controller');
 
 module.exports = [
@@ -7,7 +6,9 @@ module.exports = [
         method: 'GET',
         path: '/common/config',
         config : {
-            handler: commonController.getConfig
+            handler: function(request, reply) {
+                commonController.getConfig(request, reply);
+            }
         }
     }
 ];
