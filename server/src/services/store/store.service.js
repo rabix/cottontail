@@ -1,18 +1,17 @@
 'use strict';
+const fs = require('fs');
+const yaml = require('yaml-js');
+const json2yaml = require('json2yaml');
+const path = require('path');
+const q = require('q');
+const mkdirp = require('mkdirp');
+const dir = require('node-dir');
+const Error = require('../errors/errors.service');
+const readline = require('readline');
+const async = require('async');
 
-var fs = require('fs');
-var yaml = require('yaml-js');
-var json2yaml = require('json2yaml');
-var path = require('path');
-var q = require('q');
-var mkdirp = require('mkdirp');
-var dir = require('node-dir');
-var Error = require('../errors/errors.service');
-var readline = require('readline');
-var async = require('async');
-
-var config = require('../../config/environment');
-var workingDir = config.store.path;
+const config = require('../../config/environment');
+let workingDir = config.store.path;
 
 /**
  * Helper function that formats file object
@@ -32,7 +31,7 @@ function makeBaseFile(file) {
 module.exports = {
 
     checkExsits: function(filePath) {
-        var deferred = q.defer();
+        let deferred = q.defer();
 
         if (typeof filePath === 'string') {
             fs.exists(filePath, function(exists) {
@@ -50,7 +49,7 @@ module.exports = {
     },
 
     readFile: function(dirPath) {
-        var deferred = q.defer();
+        let deferred = q.defer();
 
         this.checkExsits(dirPath)
             .then(function() {
@@ -61,7 +60,7 @@ module.exports = {
                         deferred.reject(err);
                     }
 
-                    var extension = path.extname(dirPath);
+                    let extension = path.extname(dirPath);
                     if (extension === '.yaml') {
 
                         let yamlFile = yaml.load(file);
@@ -85,7 +84,7 @@ module.exports = {
     },
 
     readWorkspace: function(dirPath) {
-        var deferred = q.defer();
+        let deferred = q.defer();
 
         this.checkExsits(dirPath)
             .then(function() {
@@ -115,7 +114,7 @@ module.exports = {
     },
 
     readDir: function(path) {
-        var deferred = q.defer();
+        let deferred = q.defer();
 
         this.checkExsits(path)
             .then(function() {
@@ -136,7 +135,7 @@ module.exports = {
     },
 
     readCWLFiles: function(dirPath) {
-        var deferred = q.defer();
+        let deferred = q.defer();
 
         this.checkExsits(dirPath)
             .then(function() {
@@ -153,14 +152,14 @@ module.exports = {
                             return callback(null, null);
                         }
 
-                        var lineReader = readline.createInterface({
+                        let lineReader = readline.createInterface({
                             input: fs.createReadStream(file)
                         });
 
-                        var found = false;
+                        let found = false;
 
                         lineReader.on('line', function(line) {
-                            var baseFile;
+                            let baseFile;
 
                             if (/^(\s{0,4}|\t?)("class": "Workflow")/.test(line)) {
                                 found = true;
@@ -189,7 +188,7 @@ module.exports = {
                             deferred.reject(err);
                         }
 
-                        var filteredResults = results.filter(function(file) {
+                        let filteredResults = results.filter(function(file) {
                             return file !== null;
                         });
 
@@ -202,7 +201,7 @@ module.exports = {
     },
 
     mkdir: function(path) {
-        var deferred = q.defer();
+        let deferred = q.defer();
 
         if (typeof path === 'string') {
 
@@ -233,7 +232,7 @@ module.exports = {
     },
 
     createFile: function(filePath, content) {
-        var deferred = q.defer();
+        let deferred = q.defer();
 
         if (filePath) {
 
@@ -243,7 +242,7 @@ module.exports = {
                     deferred.reject(err);
                 }
 
-                var baseFile = makeBaseFile(filePath);
+                let baseFile = makeBaseFile(filePath);
                 baseFile.content = content || '';
 
                 deferred.resolve(baseFile);
@@ -255,7 +254,7 @@ module.exports = {
     },
 
     truncate: function(fileName) {
-        var deferred = q.defer();
+        let deferred = q.defer();
 
         fs.truncate(fileName, 0, function(err) {
 
@@ -271,15 +270,15 @@ module.exports = {
     },
 
     overwrite: function(fileName, content) {
-        var deferred = q.defer();
-        var _self = this;
+        let deferred = q.defer();
+        let _self = this;
 
         this.truncate(fileName)
             .then(function() {
 
-                var extension = path.extname(fileName);
+                let extension = path.extname(fileName);
                 if (extension === '.yaml') {
-                    var yamlText = json2yaml.stringify(JSON.parse(content));
+                    let yamlText = json2yaml.stringify(JSON.parse(content));
                     return _self.createFile(fileName, yamlText);
                 }
 

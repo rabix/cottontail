@@ -1,4 +1,5 @@
-var fs = require('fs');
+'use strict'
+const fs = require('fs');
 
 module.exports = {
     validateWorkingDir: function (pathArgument) {
@@ -6,12 +7,12 @@ module.exports = {
             throw new Error('No path argument. You must set the workspace path as an argument.');
         }
 
-        var path = pathArgument.trim();
+        let path = pathArgument.trim();
         if (path === '') {
             throw new Error('No path argument. You must set the workspace path as an argument.');
         }
 
-        var stats = fs.lstatSync(path);
+        let stats = fs.lstatSync(path);
         if (!stats.isDirectory()) {
             throw new Error('Directory: "' + path + '" not found.');
         }

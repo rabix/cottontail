@@ -1,12 +1,10 @@
-/**
- * Created by filip on 8/14/15.
- */
-var helper = require('../../services/store/store.service');
-var config = require('../../config/environment');
-var path = require('path');
+'use strict';
+const helper = require('../../services/store/store.service');
+const config = require('../../config/environment');
+const path = require('path');
 // have to do this because path.isAbsoulte is feature not support in all envs of node
-var pathIsAbsolute = require('path-is-absolute');
-var dir = config.store.path;
+const pathIsAbsolute = require('path-is-absolute');
+let dir = config.store.path;
 dir = path.resolve(dir);
 
 
@@ -15,33 +13,33 @@ console.log('Store dir', dir);
 module.exports = {
     fs: helper,
 
-    getFile: function (file) {
+    getFile: (file) => {
         file = pathIsAbsolute(file) ? file : path.resolve(dir, file);
         return helper.readFile(file);
     },
 
-    getFiles: function () {
+    getFiles: () => {
         return helper.readWorkspace(dir);
     },
 
-    getCWLToolbox: function () {
+    getCWLToolbox: () => {
         return helper.readCWLFiles(dir);
     },
 
-    getDir: function () {
+    getDir: () => {
         return helper.readDir(dir);
     },
 
-    createWorkspace: function (name) {
+    createWorkspace: (name) => {
         return helper.mkdir(dir + name);
     },
 
-    createFile: function (file) {
+    createFile: (file) => {
         file = pathIsAbsolute(file) ? file : path.resolve(dir, file);
         return helper.createFile(file);
     },
 
-    writeFile: function (file, content) {
+    writeFile: (file, content) => {
         file = pathIsAbsolute(file) ? file : path.resolve(dir, file);
         return helper.overwrite(file, content);
     }

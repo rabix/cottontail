@@ -1,12 +1,11 @@
 'use strict';
-
 const Boom = require('boom');
-var Store = require('../../controllers/store/store.controller');
+const Store = require('../../controllers/store/store.controller');
 
-exports.getFile = function(request, reply) {
-    var file = request.params.file;
+exports.getFile = (request, reply) => {
+    let file = request.params.file;
     
-    Store.getFile(file).then(function (data) {
+    Store.getFile(file).then((data) => {
         return reply({
             content: data
         });
@@ -15,8 +14,8 @@ exports.getFile = function(request, reply) {
     });
 };
 
-exports.getCWLToolbox = function(request, reply) {
-    Store.getCWLToolbox().then(function(tools) {
+exports.getCWLToolbox = (request, reply) => {
+    Store.getCWLToolbox().then((tools) => {
         return reply({
             tools: tools
         });
@@ -25,8 +24,8 @@ exports.getCWLToolbox = function(request, reply) {
     })
 };
 
-exports.getFilesInWorkspace = function(request, reply) {
-    Store.getFiles().then(function (storeResult) {
+exports.getFilesInWorkspace = (request, reply) => {
+    Store.getFiles().then((storeResult) => {
         return reply({
             baseDir: storeResult.baseDir,
             paths: storeResult.files
@@ -36,10 +35,10 @@ exports.getFilesInWorkspace = function(request, reply) {
     });
 };
 
-exports.updateFile = function(request, reply) {
-    var file = request.params.file;
+exports.updateFile = (request, reply) => {
+    let file = request.params.file;
 
-    Store.writeFile(file, request.payload.content).then(function (file) {
+    Store.writeFile(file, request.payload.content).then((file) => {
 
         return reply({
             message: 'File updated successfully.',
@@ -50,12 +49,12 @@ exports.updateFile = function(request, reply) {
     });
 };
 
-exports.createFile = function(request, reply) {
-    var file = request.params.file;
+exports.createFile = (request, reply) => {
+    let file = request.params.file;
 
-    Store.createFile(file).then(function (file) {
+    Store.createFile(file).then((file) => {
 
-        return request({
+        return reply({
             message: 'File created successfully.',
             content: file
         });
