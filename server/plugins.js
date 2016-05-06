@@ -12,7 +12,7 @@ module.exports = [
     /**
      *  Register the API router as a plugin so we can have a prefix */
     {
-        register: require('./src/routes/api'),
+        register: require('./src/plugins/apiRouter.plugin'),
         routes: {
             prefix: '/api'
         }

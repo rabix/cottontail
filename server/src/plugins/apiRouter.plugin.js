@@ -1,7 +1,7 @@
 'use strict';
 
-const commonRoutes = require('./common.router');
-const fileService = require('./filseService.router');
+const commonRoutes = require('../routes/api/common.router');
+const fileService = require('../routes/api/filseService.router');
 
 exports.register = function (server, options, next) {
     server.route(commonRoutes);
