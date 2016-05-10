@@ -24,6 +24,18 @@ exports.getCWLToolbox = (request, reply) => {
     })
 };
 
+exports.getDirContents = (request, response) => {
+
+    Store.getDir(request.query.dir).then((contents) => {
+        console.log(contents);
+        return response({
+            contents: contents
+        });
+    }).catch((err) => {
+        handleError(response, err);
+    });
+};
+
 exports.getFilesInWorkspace = (request, reply) => {
     Store.getFiles().then((storeResult) => {
         return reply({

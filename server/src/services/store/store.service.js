@@ -28,6 +28,45 @@ function makeBaseFile(file) {
     };
 }
 
+
+function parseDirContents(file) {
+
+    let deferred = q.defer();
+    let template = {
+        name: path.basename(file),
+        // so the frontend always has relative path to working directory
+        path: path.relative(path.resolve(workingDir), file),
+        fullPath: path.resolve(workingDir, file)
+    };
+
+    //@FIXME handle error better
+    fs.lstat(file, (err, stats) => {
+        if (err) {
+            console.error(err);
+            deferred.resolve(null);
+        }
+        if (stats.isDirectory()) {
+            template.type = 'directory';
+
+            //@FIXME handle error better
+            fs.readdir(file, (err, files) => {
+                if (!err) {
+                    template.isEmpty = (!files && !files.length);
+                    deferred.resolve(template);
+                }
+            })
+
+        } else {
+            template.type = path.extname(file);
+            deferred.resolve(template);
+        }
+    });
+
+
+    return deferred.promise;
+
+}
+
 module.exports = {
 
     checkExsits: function(filePath) {
@@ -113,18 +152,28 @@ module.exports = {
 
     },
 
-    readDir: function(path) {
+    readDir: function(relativePath) {
         let deferred = q.defer();
 
-        this.checkExsits(path)
+        let resolvedPath = path.resolve(workingDir, relativePath);
+
+        this.checkExsits(resolvedPath)
             .then(function() {
-                fs.readdir(path, function(err, files) {
+                fs.readdir(resolvedPath, function(err, contents) {
                     if (err) {
                         Error.handle(err);
                         return deferred.reject(err);
                     }
 
-                    deferred.resolve(files);
+                    let promises = contents.map((filePath) => {
+                       return parseDirContents(path.resolve(resolvedPath, filePath));
+                    });
+
+                    q.all(promises).then((content) => {
+                        deferred.resolve(content);
+                    }, (err) => {
+                        deferred.reject(err);
+                    });
                 });
             })
             .catch(function(err) {

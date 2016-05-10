@@ -16,6 +16,20 @@ module.exports = [
     },
 
     /**
+     * Directory
+     */
+    {
+        method: 'GET',
+        path: '/fs/dir',
+        config: {
+            handler: function(request, response) {
+                fsController.getDirContents(request, response);
+            }
+        }
+
+    },
+
+    /**
      * Toolbox
      */
     {
@@ -33,7 +47,7 @@ module.exports = [
      */
     {
         method: 'GET',
-        path: '/fs/{file}',
+        path: '/fs/file',
         config : {
             handler: function(request, reply) {
                 fsController.getFile(request, reply);
