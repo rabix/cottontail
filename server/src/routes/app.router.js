@@ -7,15 +7,17 @@ let postSizeLimit =  10 * 1024 * 1024; // 10MB in bytes
 let appPath;
 
 if ('production' === env) {
-    appPath = path.join(config.root, 'client/dist');
+    // appPath = path.join(config.root, 'client/dist');
 }
 
 if ('development' === env || 'test' === env) {
-    appPath = path.join(config.root, 'client/.tmp/serve');
+   // appPath = path.join(config.root, 'client/.tmp/serve');
 }
 
 module.exports = [
+    /*TODO: Use this if we decide to serve the web app files 
     {
+       
         method: 'GET',
         path: '/{path*}',
         handler: {
@@ -30,6 +32,7 @@ module.exports = [
             }
         }
     },
+    */
     {
         method: 'GET',
         path: '/bower_components/{path*}',

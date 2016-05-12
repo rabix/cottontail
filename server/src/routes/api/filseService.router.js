@@ -9,6 +9,9 @@ module.exports = [
         method: 'GET',
         path: '/fs',
         config : {
+            plugins: {
+                'hapi-io': 'getFilesInWorkspace'
+            },
             handler: function(request, reply) {
                 fsController.getFilesInWorkspace(request, reply);
             }
@@ -36,6 +39,9 @@ module.exports = [
         method: 'GET',
         path: '/fs/toolbox',
         config : {
+            plugins: {
+                'hapi-io': 'getCWLToolbox'
+            },
             handler: function(request, reply) {
                 fsController.getCWLToolbox(request, reply);
             }
@@ -49,6 +55,9 @@ module.exports = [
         method: 'GET',
         path: '/fs/file',
         config : {
+            plugins: {
+                'hapi-io': 'getFile'
+            },
             handler: function(request, reply) {
                 fsController.getFile(request, reply);
             }
@@ -58,6 +67,9 @@ module.exports = [
         method: 'POST',
         path: '/fs/{file}',
         config : {
+            plugins: {
+                'hapi-io': 'createFile'
+            },
             handler: function(request, reply) {
                 fsController.createFile(request, reply);
             }
@@ -67,6 +79,9 @@ module.exports = [
         method: 'PUT',
         path: '/fs/{file}',
         config : {
+            plugins: {
+                'hapi-io': 'updateFile'
+            },
             handler: function(request, reply) {
                 fsController.updateFile(request, reply);
             }

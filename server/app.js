@@ -29,7 +29,7 @@ try {
     var Store = require('./src/controllers/store/store.controller');
     var config = require('./src/config/environment');
     var logger = require('./src/services/logger/logger.service');
-    var commonPathsRouter = require('./src/routes/commonPaths.router');
+    var appRouter = require('./src/routes/app.router');
     var plugins = require('./plugins');
 
     if (config.strategy === 'local') {
@@ -62,7 +62,7 @@ try {
         }
 
         /* Add common path rules */
-        server.route(commonPathsRouter);
+        server.route(appRouter);
 
         server.ext('onPreResponse', function (request, reply) {
             var response = request.response;

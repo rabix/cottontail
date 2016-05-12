@@ -39,5 +39,12 @@ module.exports = [
         /* Logging */
         register: require('good'),
         options: goodOptions
+    },
+    {
+        /*SocketIO*/
+        register: require('hapi-io'),
+        options: {
+
+        }
     }
 ];
