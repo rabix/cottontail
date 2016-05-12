@@ -1,6 +1,6 @@
 'use strict';
-const Boom = require('boom');
-const Store = require('../../controllers/store/store.controller');
+let Boom = require('boom');
+let Store = require('../../controllers/store/store.controller');
 
 exports.getFile = (request, reply) => {
     let file = request.params.file;
@@ -21,18 +21,18 @@ exports.getCWLToolbox = (request, reply) => {
         });
     }).catch(function(err) {
         handleError(reply, err);
-    })
+    });
 };
 
-exports.getDirContents = (request, response) => {
+exports.getDirContents = (request, reply) => {
 
     Store.getDir(request.query.dir).then((contents) => {
         console.log(contents);
-        return response({
+        return reply({
             contents: contents
         });
-    }).catch((err) => {
-        handleError(response, err);
+    }).catch(function(err){
+        handleError(reply, err);
     });
 };
 
@@ -76,5 +76,7 @@ exports.createFile = (request, reply) => {
 };
 
 function handleError(reply, err) {
-    return reply(Boom.wrap(error, err.status));
+
+    let wrapped = Boom.create(err.status, err.message);
+    return reply(wrapped);
 }
