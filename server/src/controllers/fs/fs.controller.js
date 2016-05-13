@@ -2,6 +2,11 @@
 let Boom = require('boom');
 let Store = require('../../controllers/store/store.controller');
 
+/*
+@todo: ensure documents and directories outside of working dir cannot be accessed
+@todo: error handling for nonexistent directories/contents
+ */
+
 exports.getFile = (request, reply) => {
     let file = request.params.file;
     
