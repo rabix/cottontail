@@ -25,6 +25,9 @@ module.exports = [
         method: 'GET',
         path: '/fs/dir',
         config: {
+            plugins: {
+                'hapi-io': 'getDirContents'
+            },
             handler: function(request, response) {
                 fsController.getDirContents(request, response);
             }

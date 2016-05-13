@@ -26,8 +26,9 @@ exports.getCWLToolbox = (request, reply) => {
 
 exports.getDirContents = (request, reply) => {
 
+    console.log("Got params", request.query);
     Store.getDir(request.query.dir).then((contents) => {
-        console.log(contents);
+        console.log(" Dir content", contents);
         return reply({
             contents: contents
         });
