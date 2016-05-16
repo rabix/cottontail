@@ -8,40 +8,54 @@ let Store = require('../../controllers/store/store.controller');
  */
 
 exports.getFile = (request, reply) => {
-    let file = request.params.file;
+    let file = request.query.file;
+
+    if (!file) {
+        return handleError(reply, {status: 400, message: 'File path not specified'});
+    }
     
     Store.getFile(file).then((data) => {
         return reply({
             content: data
         });
     }).catch(function (err) {
-        handleError(reply, err);
+        return handleError(reply, err);
     });
 };
 
+/**
+ * @deprecated
+ * @param request
+ * @param reply
+ */
 exports.getCWLToolbox = (request, reply) => {
     Store.getCWLToolbox().then((tools) => {
         return reply({
             tools: tools
         });
     }).catch(function(err) {
-        handleError(reply, err);
+        return handleError(reply, err);
     });
 };
 
 exports.getDirContents = (request, reply) => {
-
-    console.log("Got params", request.query);
-    Store.getDir(request.query.dir).then((contents) => {
-        console.log(" Dir content", contents);
+    let dir = request.query.dir;
+    
+    Store.getDir(dir).then((content) => {
+        console.log(" Dir content", content);
         return reply({
-            contents: contents
+            content: content
         });
     }).catch(function(err){
-        handleError(reply, err);
+        return handleError(reply, err);
     });
 };
 
+/**
+ * @deprecated
+ * @param request
+ * @param reply
+ */
 exports.getFilesInWorkspace = (request, reply) => {
     Store.getFiles().then((storeResult) => {
         return reply({
@@ -49,12 +63,16 @@ exports.getFilesInWorkspace = (request, reply) => {
             paths: storeResult.files
         });
     }).catch(function (err) {
-        handleError(reply, err);
+        return handleError(reply, err);
     });
 };
 
 exports.updateFile = (request, reply) => {
-    let file = request.params.file;
+    let file = request.query.file;
+
+    if (!file) {
+        return handleError(reply, {status: 400, message: 'File path not specified'});
+    }
 
     Store.writeFile(file, request.payload.content).then((file) => {
 
@@ -63,12 +81,17 @@ exports.updateFile = (request, reply) => {
             content: file
         });
     }).catch(function (err) {
-        handleError(reply, err);
+        return handleError(reply, err);
     });
 };
 
 exports.createFile = (request, reply) => {
-    let file = request.params.file;
+    let file = request.query.file;
+
+    if (!file) {
+        return handleError(reply, {status: 400, message: 'File path not specified'});
+    }
+
 
     Store.createFile(file).then((file) => {
 
@@ -77,7 +100,7 @@ exports.createFile = (request, reply) => {
             content: file
         });
     }).catch(function (err) {
-        handleError(reply, err);
+        return handleError(reply, err);
     });
 };
 
