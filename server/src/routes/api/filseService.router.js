@@ -37,6 +37,7 @@ module.exports = [
 
     /**
      * Toolbox
+     * @deprecated
      */
     {
         method: 'GET',
