@@ -86,19 +86,21 @@ exports.updateFile = (request, reply) => {
 };
 
 exports.createFile = (request, reply) => {
-    let file = request.query.file;
+    let file = request.params.file;
+    let content = request.params.content;
 
     if (!file) {
         return handleError(reply, {status: 400, message: 'File path not specified'});
     }
 
 
-    Store.createFile(file).then((file) => {
+    Store.createFile(file, content).then((file) => {
 
         return reply({
             message: 'File created successfully.',
             content: file
         });
+
     }).catch(function (err) {
         return handleError(reply, err);
     });

@@ -285,18 +285,26 @@ module.exports = {
 
         if (filePath) {
 
-            fs.writeFile(filePath, content || '', function(err) {
+            fs.access(filePath, fs.F_OK, function(err) {
                 if (err) {
-                    Error.handle(err);
-                    deferred.reject(err);
+                    fs.writeFile(filePath, content || '', function(err) {
+                        if (err) {
+                            Error.handle(err);
+                            deferred.reject(err);
+                        }
+
+                        let baseFile = makeBaseFile(filePath);
+                        baseFile.content = content || '';
+
+                        deferred.resolve(baseFile);
+                    });
+
+                } else {
+                    let error = {message: 'Cannot overwrite existing file', status: 403};
+                    // Error.handle(error);  //automatically returns 500 even though different error should be returned
+                    deferred.reject(error);
                 }
-
-                let baseFile = makeBaseFile(filePath);
-                baseFile.content = content || '';
-
-                deferred.resolve(baseFile);
             });
-
         }
 
         return deferred.promise;
