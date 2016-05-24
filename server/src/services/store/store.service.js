@@ -13,6 +13,14 @@ const async = require('async');
 const config = require('../../config/environment');
 let workingDir = config.store.path;
 
+/*
+ @todo: ensure documents and directories outside of working dir cannot be accessed
+ might be useful for this task: https://docs.nodejitsu.com/articles/file-system/security/introduction/
+
+ @todo: error handling for nonexistent/inaccessible directories/files
+ */
+
+
 /**
  * Helper function that formats file object
  * @param file
@@ -81,26 +89,40 @@ module.exports = {
                 });
             });
         } else {
-            deferred.reject('Path name must be a string');
+            deferred.reject({
+                message: 'Path name must be a string',
+                status: 400
+            });
         }
 
         return deferred.promise;
     },
 
-    readFile: function(dirPath) {
+    readFile: function(filePath) {
         let deferred = q.defer();
 
-        this.checkExsits(dirPath)
+        if (!filePath) {
+            deferred.reject({
+                status: 400,
+                message: 'File path not specified'
+            });
+        }
+
+        filePath = path.isAbsolute(filePath) ? filePath : path.resolve(workingDir, filePath);
+
+        this.checkExsits(filePath)
             .then(function() {
-                fs.readFile(dirPath, "utf-8", function(err, file) {
+                fs.readFile(filePath, "utf-8", function(err, file) {
 
                     if (err) {
                         Error.handle(err);
                         deferred.reject(err);
                     }
 
-                    let extension = path.extname(dirPath);
-                    if (extension === '.yaml') {
+                    let baseFile = makeBaseFile(filePath);
+                    baseFile.content = file;
+
+                    if (baseFile.type === '.yaml') {
 
                         let yamlFile = yaml.load(file);
                         let jsonString = '';
@@ -109,10 +131,11 @@ module.exports = {
                             jsonString = JSON.stringify(yamlFile, null, 4);
                         }
 
-                        deferred.resolve(jsonString);
+                        baseFile.content = jsonString;
+                        deferred.resolve(baseFile);
                     }
 
-                    deferred.resolve(file);
+                    deferred.resolve(baseFile);
                 });
             })
             .catch(function(err) {
@@ -166,7 +189,7 @@ module.exports = {
                     }
 
                     let promises = contents.map((filePath) => {
-                       return parseDirContents(path.resolve(resolvedPath, filePath));
+                        return parseDirContents(path.resolve(resolvedPath, filePath));
                     });
 
                     q.all(promises).then((content) => {
@@ -283,29 +306,36 @@ module.exports = {
     createFile: function(filePath, content) {
         let deferred = q.defer();
 
-        if (filePath) {
-
-            fs.access(filePath, fs.F_OK, function(err) {
-                if (err) {
-                    fs.writeFile(filePath, content || '', function(err) {
-                        if (err) {
-                            Error.handle(err);
-                            deferred.reject(err);
-                        }
-
-                        let baseFile = makeBaseFile(filePath);
-                        baseFile.content = content || '';
-
-                        deferred.resolve(baseFile);
-                    });
-
-                } else {
-                    let error = {message: 'Cannot overwrite existing file', status: 403};
-                    // Error.handle(error);  //automatically returns 500 even though different error should be returned
-                    deferred.reject(error);
-                }
+        if (!filePath) {
+            deferred.reject({
+                status: 400,
+                message: 'File path not specified'
             });
         }
+
+        filePath = path.isAbsolute(filePath) ? filePath : path.resolve(workingDir, filePath);
+
+        fs.access(filePath, fs.F_OK, function(err) {
+            if (err) {
+                fs.writeFile(filePath, content || '', function(err) {
+                    if (err) {
+                        Error.handle(err);
+                        deferred.reject(err);
+                    }
+
+                    let baseFile = makeBaseFile(filePath);
+                    baseFile.content = content || '';
+
+                    deferred.resolve(baseFile);
+                });
+
+            } else {
+                deferred.reject({
+                    message: 'Cannot overwrite existing file',
+                    status: 403
+                });
+            }
+        });
 
         return deferred.promise;
     },
@@ -329,6 +359,13 @@ module.exports = {
     overwrite: function(fileName, content) {
         let deferred = q.defer();
         let _self = this;
+
+        if (!fileName) {
+            deferred.reject({
+                status: 400,
+                message: 'File path not specified'
+            });
+        }
 
         this.truncate(fileName)
             .then(function() {
