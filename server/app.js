@@ -26,7 +26,7 @@ try {
         console.log('WORKING_DIR is ' + process.env.WORKING_DIR);
     }
 
-    var Store = require('./src/controllers/store/store.controller');
+    var StoreService = require('./src/services/store/store.service');
     var config = require('./src/config/environment');
     var logger = require('./src/services/logger/logger.service');
     var appRouter = require('./src/routes/app.router');
@@ -39,7 +39,7 @@ try {
             dir = dir + '/';
         }
 
-        Store.fs.mkdir(dir).then(function () {
+        StoreService.mkdir(dir).then(function () {
             Logger.info('Working dir created.');
         }, function () {
             Logger.info('Working dir exists.');

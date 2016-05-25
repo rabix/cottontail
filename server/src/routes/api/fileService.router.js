@@ -3,23 +3,7 @@ const fsController = require('./../../controllers/fs/fs.controller');
 
 module.exports = [
     /**
-     * Workspace
-     */
-    {
-        method: 'GET',
-        path: '/fs',
-        config : {
-            plugins: {
-                'hapi-io': 'getFilesInWorkspace'
-            },
-            handler: function(request, reply) {
-                fsController.getFilesInWorkspace(request, reply);
-            }
-        }
-    },
-
-    /**
-     * Directory
+     * Get directory content
      */
     {
         method: 'GET',
@@ -36,24 +20,7 @@ module.exports = [
     },
 
     /**
-     * Toolbox
-     * @deprecated
-     */
-    {
-        method: 'GET',
-        path: '/fs/toolbox',
-        config : {
-            plugins: {
-                'hapi-io': 'getCWLToolbox'
-            },
-            handler: function(request, reply) {
-                fsController.getCWLToolbox(request, reply);
-            }
-        }
-    },
-
-    /**
-     * Files
+     * Get file content
      */
     {
         method: 'GET',
@@ -67,9 +34,13 @@ module.exports = [
             }
         }
     },
+
+    /**
+     * Create file
+     */
     {
         method: 'POST',
-        path: '/fs/{file}',
+        path: '/fs/file/{file}',
         config : {
             plugins: {
                 'hapi-io': 'createFile'
@@ -79,9 +50,13 @@ module.exports = [
             }
         }
     },
+
+    /**
+     * Update file content
+     */
     {
         method: 'PUT',
-        path: '/fs/{file}',
+        path: '/fs/file/{file}',
         config : {
             plugins: {
                 'hapi-io': 'updateFile'

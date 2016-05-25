@@ -1,107 +1,73 @@
 'use strict';
 let Boom = require('boom');
-let Store = require('../../controllers/store/store.controller');
-
-/*
-@todo: ensure documents and directories outside of working dir cannot be accessed
-@todo: error handling for nonexistent directories/contents
- */
-
-exports.getFile = (request, reply) => {
-    let file = request.query.file;
-
-    if (!file) {
-        return handleError(reply, {status: 400, message: 'File path not specified'});
-    }
-    
-    Store.getFile(file).then((data) => {
-        return reply({
-            content: data
-        });
-    }).catch(function (err) {
-        return handleError(reply, err);
-    });
-};
+let StoreService = require('../../services/store/store.service');
 
 /**
- * @deprecated
+ * GET request to fs/file?file={file}
  * @param request
  * @param reply
  */
-exports.getCWLToolbox = (request, reply) => {
-    Store.getCWLToolbox().then((tools) => {
+exports.getFile = (request, reply) => {
+    let file = request.query.file;
+
+    StoreService.readFile(file).then((data) => {
         return reply({
-            tools: tools
+            message: 'Read file successfully',
+            content: data
         });
     }).catch(function(err) {
         return handleError(reply, err);
     });
 };
 
+/**
+ * GET request to fs/dir/{dir}
+ * @param request
+ * @param reply
+ */
 exports.getDirContents = (request, reply) => {
-    let dir = request.query.dir;
-    
-    Store.getDir(dir).then((content) => {
-        console.log(" Dir content", content);
+
+    StoreService.readDir(request.query.dir).then((content) => {
         return reply({
+            message: 'Read directory successfully',
             content: content
         });
-    }).catch(function(err){
+    }).catch(function(err) {
         return handleError(reply, err);
     });
 };
 
 /**
- * @deprecated
+ * PUT request to fs/file/{file}
  * @param request
  * @param reply
  */
-exports.getFilesInWorkspace = (request, reply) => {
-    Store.getFiles().then((storeResult) => {
-        return reply({
-            baseDir: storeResult.baseDir,
-            paths: storeResult.files
-        });
-    }).catch(function (err) {
-        return handleError(reply, err);
-    });
-};
-
 exports.updateFile = (request, reply) => {
-    let file = request.query.file;
 
-    if (!file) {
-        return handleError(reply, {status: 400, message: 'File path not specified'});
-    }
-
-    Store.writeFile(file, request.payload.content).then((file) => {
-
+    StoreService.overwrite(request.params.file, request.payload.content).then((file) => {
         return reply({
             message: 'File updated successfully.',
             content: file
         });
-    }).catch(function (err) {
+    }).catch(function(err) {
         return handleError(reply, err);
     });
 };
 
+/**
+ * POST request to fs/file/{file}
+ * @param request
+ * @param reply
+ */
 exports.createFile = (request, reply) => {
-    let file = request.params.file;
-    let content = request.params.content;
 
-    if (!file) {
-        return handleError(reply, {status: 400, message: 'File path not specified'});
-    }
-
-
-    Store.createFile(file, content).then((file) => {
-
+    StoreService.createFile(request.params.file, request.params.content).then((file) => {
         return reply({
             message: 'File created successfully.',
             content: file
         });
 
-    }).catch(function (err) {
+    }).catch(function(err) {
         return handleError(reply, err);
     });
 };
