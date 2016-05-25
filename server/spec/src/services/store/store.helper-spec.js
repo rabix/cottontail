@@ -132,5 +132,31 @@ describe('storeService', function() {
                 })
                 .finally(done);
         });
+    });
+
+    describe('readDir', function() {
+        it('should read contents of root if not provided argument', function(done) {
+            storeService.readDir()
+                .then(function(result) {
+                    expect(result).toBeDefined();
+                    expect(result.length).toBeGreaterThan(0);
+                })
+                .catch(function(error) {
+                    expect(error).toBeUndefined();
+                })
+                .finally(done);
+        });
+
+        it('should read contents of subdirectory', function(done) {
+            storeService.readDir('spec/test-data/directory-with-two-files')
+                .then(function(result) {
+                    expect(result).toBeDefined();
+                    expect(result.length).toBe(2);
+                })
+                .catch(function(error) {
+                    expect(error).toBeUndefined();
+                })
+                .finally(done);
+        })
     })
 });

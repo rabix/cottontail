@@ -177,6 +177,7 @@ module.exports = {
 
     readDir: function(relativePath) {
         let deferred = q.defer();
+        relativePath = relativePath || '';
 
         let resolvedPath = path.resolve(workingDir, relativePath);
 
