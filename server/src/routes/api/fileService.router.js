@@ -65,5 +65,21 @@ module.exports = [
                 fsController.updateFile(request, reply);
             }
         }
+    },
+
+    /**
+     * Check if a file or directory exists
+     */
+    {
+        method: 'GET',
+        path: '/fs/',
+        config: {
+            plugins: {
+                'hapi-io': 'fileExists'
+            },
+            handler: function(request, reply) {
+                fsController.checkIfFileExists(request, reply);
+            }
+        }
     }
 ];
