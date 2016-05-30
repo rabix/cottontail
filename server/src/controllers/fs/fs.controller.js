@@ -72,6 +72,18 @@ exports.createFile = (request, reply) => {
     });
 };
 
+exports.checkIfFileExists = (request, reply) => {
+    StoreService.checkExsits(request.query.path).then(result => {
+        return reply({
+            message: 'File or Directory exists.',
+            content: result
+        });
+    }).catch(function(err) {
+        return handleError(reply, err);
+    })
+
+};
+
 function handleError(reply, err) {
 
     let wrapped = Boom.create(err.status, err.message);

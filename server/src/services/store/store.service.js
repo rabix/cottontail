@@ -80,6 +80,8 @@ module.exports = {
     checkExsits: function(filePath) {
         let deferred = q.defer();
 
+        filePath = path.isAbsolute(filePath) ? filePath : path.resolve(workingDir, filePath);
+
         if (typeof filePath === 'string') {
             fs.exists(filePath, function(exists) {
 
