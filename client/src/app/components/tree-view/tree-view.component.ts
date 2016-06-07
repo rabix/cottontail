@@ -1,4 +1,4 @@
-import {Component, Input, Injector, Output} from "@angular/core";
+import {Component, Input, Injector, Output, AfterViewInit} from "@angular/core";
 import {TreeNodeComponent} from "./structure/tree-node.component";
 import "./tree-view.component.scss";
 import {AsyncPipe} from "@angular/common";
@@ -27,7 +27,7 @@ import {ComponentFactoryProviderFn} from "./interfaces/tree-data-provider";
     directives: [TreeViewComponent, TreeNodeComponent, DynamicallyCompiledComponentDirective],
     pipes: [AsyncPipe]
 })
-export class TreeViewComponent {
+export class TreeViewComponent implements AfterViewInit {
 
     @Input() dataProvider: ComponentFactoryProviderFn;
     @Input() injector: Injector;
@@ -47,7 +47,7 @@ export class TreeViewComponent {
         this.isExpanded = expanded;
     }
 
-    ngOnInit() {
+    ngAfterViewInit() {
         this.dynamicComponentStream = this.dataProvider().do((data)=> {
             this.onDataLoad.next(data);
         });
