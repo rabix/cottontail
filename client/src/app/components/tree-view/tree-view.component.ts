@@ -1,55 +1,28 @@
-import {Component, Input, Injector, Output, AfterViewInit} from "@angular/core";
-import {TreeNodeComponent} from "./structure/tree-node.component";
 import "./tree-view.component.scss";
 import {AsyncPipe} from "@angular/common";
-import {DynamicallyCompiledComponentDirective} from "../../directives/dynamically-compiled-component.directive";
-import {BehaviorSubject, Observable} from "rxjs/Rx";
-import {ComponentFactoryProviderFn} from "./interfaces/tree-data-provider";
+import {Observable} from "rxjs/Rx";
+import {Component, Input} from "@angular/core";
+import {ComponentCompilerDirective} from "../runtime-compiler/component-compiler.directive";
+import {TreeNodeComponent} from "./structure/tree-node.component";
+import {DynamicComponentContext} from "../runtime-compiler/dynamic-component-context";
 
 @Component({
     selector: "tree-view",
     template: `
-        <template ngFor let-componentData [ngForOf]="dynamicComponentStream | async">
-        
-            
-            
             <!--This <div class="tree-node"> exists as a CSS specificity convenience-->
-            <div class="tree-node">
-                <template class="tree-node" 
-                          [dynamicallyCompiled]="componentData.factory" 
-                          [injector]="injector"
-                          [model]="componentData.data">
-                </template>   
-            </div>
+            <div *ngFor="let ctx of (components | async)" class="tree-node" [component-compiler]="ctx"></div>
             
-        </template>
     `,
-    directives: [TreeViewComponent, TreeNodeComponent, DynamicallyCompiledComponentDirective],
+    directives: [TreeViewComponent, TreeNodeComponent, ComponentCompilerDirective],
     pipes: [AsyncPipe]
 })
-export class TreeViewComponent implements AfterViewInit {
+export class TreeViewComponent {
 
-    @Input() dataProvider: ComponentFactoryProviderFn;
-    @Input() injector: Injector;
+    @Input() dataProvider: any;
 
-    @Output() onDataLoad: BehaviorSubject<any>;
+    private components: Observable<DynamicComponentContext>;
 
-
-    private isExpanded = false;
-    private dynamicComponentStream: Observable<any>;
-
-    constructor() {
-        this.onDataLoad = new BehaviorSubject(null);
-    }
-
-
-    toggleExpansion(expanded) {
-        this.isExpanded = expanded;
-    }
-
-    ngAfterViewInit() {
-        this.dynamicComponentStream = this.dataProvider().do((data)=> {
-            this.onDataLoad.next(data);
-        });
+    ngOnInit() {
+        this.components = this.dataProvider();
     }
 }

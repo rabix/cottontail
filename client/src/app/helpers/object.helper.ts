@@ -30,7 +30,23 @@ export class ObjectHelper {
         }, target);
     }
 
-    /**
+    public static getProperty(target: Object, path: string[] | string, defaultValue?: any): any {
+        // Ensure that path is an array of path elements
+        const path = typeof path === "string" ? path.split(ObjectHelper.pathDelimiter) : path;
+
+        let lastRef = target;
+        for (let key of path) {
+            if (lastRef.hasOwnProperty(key)) {
+                lastRef = lastRef[key];
+            } else {
+                return defaultValue;
+            }
+        }
+
+        return lastRef;
+    }
+
+    /**F
      * Overwrite enumerable properties of the target with the ones from the source object
      * @param target
      * @param source

@@ -19,9 +19,7 @@ require("./file-tree.component.scss");
     template: `
         <block-loader *ngIf="treeIsLoading"></block-loader>
         
-        <tree-view [dataProvider]="dataProviderFn" 
-                   [injector]="injector" 
-                   (onDataLoad)="onDataLoad($event)"></tree-view>
+        <tree-view [dataProvider]="dataProviderFn"></tree-view>
     `
 })
 export class FileTreeComponent {
@@ -32,11 +30,10 @@ export class FileTreeComponent {
     private storeSubscription;
 
     constructor(private treeService: FileTreeService,
-                private injector: Injector,
                 private store: Store,
                 private fileEffects: FileEffects) {
 
-        this.treeIsLoading  = true;
+        this.treeIsLoading  = false;
         this.dataProviderFn = treeService.createDataProviderForDirectory("");
     }
 
@@ -46,7 +43,6 @@ export class FileTreeComponent {
 
         // Upon the change in the directory tree, we should update the rendering
         this.store.select("directoryTree").subscribe(tree => {
-            console.log("New Tree Structure:", tree);
         });
 
         // This is the main user of the directory structure, it should dispatch the first request
@@ -58,7 +54,4 @@ export class FileTreeComponent {
         this.storeSubscription.unsubscribe();
     }
 
-    onDataLoad(data) {
-        this.treeIsLoading = data === null;
-    }
 }

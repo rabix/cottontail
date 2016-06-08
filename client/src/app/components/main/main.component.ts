@@ -1,20 +1,20 @@
-import {WorkspaceComponent} from "../workspace/workspace.component";
 import {ActionPanelComponent} from "../action-panel/action-panel.component";
 import {ApiService} from "../../services/api/api.service";
+import {APP_CONFIG, CONFIG} from "../../config/app.config";
 import {AsyncSocketProviderService} from "../file-tree/async-socket-provider.service";
+import {BACKEND_SERVICE} from "../../services/data/providers/data.types";
 import {ComponentRegistryFactoryService} from "../workspace/registry/component-registry-factory.service";
+import {DataService} from "../../services/data/data.service";
 import {FileApi} from "../../services/api/file.api";
+import {FileEffects} from "../../store/effects/file.effects";
 import {FileRegistry} from "../../services/file-registry.service";
 import {FileTreeService} from "../file-tree/file-tree.service";
-import {APP_CONFIG, CONFIG} from "../../config/app.config";
-import {BACKEND_SERVICE} from "../../services/data/providers/data.types";
-import {SocketService as NewSocketService} from "../../services/data/providers/socket/socket.service";
-import {WorkspaceService} from "../workspace/workspace.service";
-import {DataService} from "../../services/data/data.service";
-import {SocketService} from "../../services/api/socket.service";
 import {provide, Component} from "@angular/core";
-import {FileEffects} from "../../store/effects/file.effects";
+import {SocketService as NewSocketService} from "../../services/data/providers/socket/socket.service";
+import {SocketService} from "../../services/api/socket.service";
 import {StateUpdates} from "@ngrx/effects";
+import {WorkspaceComponent} from "../workspace/workspace.component";
+import {WorkspaceService} from "../workspace/workspace.service";
 require("./../../../assets/sass/main.scss");
 require("./main.component.scss");
 
@@ -32,8 +32,8 @@ require("./main.component.scss");
         AsyncSocketProviderService,
         ComponentRegistryFactoryService,
         FileApi,
-        FileRegistry,
         FileTreeService,
+        FileRegistry,
         provide(APP_CONFIG, {useValue: CONFIG}),
         provide(BACKEND_SERVICE, {useClass: NewSocketService}),
         SocketService,

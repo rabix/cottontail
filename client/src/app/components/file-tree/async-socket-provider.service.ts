@@ -6,7 +6,6 @@ import {FileNodeComponent} from "./nodes/file-node.component";
 import {DirectoryNodeComponent} from "./nodes/directory-node.component";
 import {TreeDataProvider} from "../tree-view/interfaces/tree-data-provider";
 import {DirectoryChild, DirectoryModel} from "../../store/models/fs.models";
-import {Directory} from "../../services/file-registry.service";
 
 
 @Injectable()
@@ -35,10 +34,10 @@ export class AsyncSocketProviderService implements TreeDataProvider {
                         componentType = DirectoryNodeComponent;
                     }
 
-                    return this.resolver.resolveComponent(componentType).then((factory: ComponentFactory<any>) => {
+                    return this.resolver.resolveComponent(componentType)
+                        .then((factory: ComponentFactory<any>) => {
                         return {
                             factory: factory,
-                            data: item
                         };
                     });
 
