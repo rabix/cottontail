@@ -53,11 +53,60 @@ export class ObjectHelper {
      * @returns {Object}
      * @link ObjectHelper-addEnumerablesTest
      */
-    public static addEnumerables(target: Object, source: Object): void {
+    public static extendEnumerables(target: Object, source: Object): void {
         for (let key of Object.keys(source)) {
             if (target.propertyIsEnumerable(key)) {
                 target[key] = source[key];
             }
         }
+    }
+
+    public static findChild(children: Object[],
+                            path: string[],
+                            comparator: (child: any, pathKey: string) => boolean,
+                            childrenKey = "children"): any {
+
+
+        let pathKey = path.shift();
+
+        for (let i = 0; i < children.length; i++) {
+            let child = children[i];
+
+            if (comparator(child, pathKey) === true) {
+                if (path.length === 0) {
+                    return child;
+                } else {
+                    return ObjectHelper.findChild(child[childrenKey], path, comparator);
+                }
+            }
+        }
+
+        // No match found
+    }
+
+    public static extendWithNonExisting(target: Object, ...sources: Object[]): void {
+
+        for (let i = 0; i < sources.length; i++) {
+            for (let key of Object.keys(sources[i])) {
+                if (!target.hasOwnProperty(key)) {
+                    target[key] = sources[i][key];
+                }
+            }
+        }
+    }
+
+    public static childrenDiff(target: Object[], update: Object[], identifier: string, defaultProps = {}): Object[] {
+
+        return update.map(item => {
+            let correspondingitemInTarget = ObjectHelper
+                .findChild(target, [item[identifier]], (ch, key) => ch[identifier] === key);
+
+
+            ObjectHelper.extendWithNonExisting(item, correspondingitemInTarget || {}, defaultProps);
+
+            return item;
+
+        });
+
     }
 }

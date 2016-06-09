@@ -20,10 +20,6 @@ tree-view {
 
     font-size: .95em !important;
     cursor: pointer;
-    -webkit-user-select: none; /* webkit (safari, chrome) browsers */
-    -moz-user-select: none; /* mozilla browsers */
-    -ms-user-select: none; /* IE10+ */
-    user-select: none;
 
     animation: tree-node-come-in;
     animation-iteration-count: 1;

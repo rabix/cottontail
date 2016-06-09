@@ -10,7 +10,7 @@ import {DynamicComponentContext} from "../runtime-compiler/dynamic-component-con
     selector: "tree-view",
     template: `
             <!--This <div class="tree-node"> exists as a CSS specificity convenience-->
-            <div *ngFor="let ctx of (components | async)" class="tree-node" [component-compiler]="ctx"></div>
+            <div *ngFor="let ctx of (components | async)" [component-compiler]="ctx"></div>
             
     `,
     directives: [TreeViewComponent, TreeNodeComponent, ComponentCompilerDirective],

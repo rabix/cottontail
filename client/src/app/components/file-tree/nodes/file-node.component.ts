@@ -7,9 +7,6 @@ import {FilePath} from "../../../services/api/api-response-types";
     selector: "file-tree:file",
     directives: [TreeviewSelectableDirective],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    host: {
-        "(dblclick)": "onDoubleClick()"
-    },
     template: `
         <div treeview-selectable>
             <span class="expander"></span>
@@ -26,8 +23,5 @@ export class FileNodeComponent implements TreeViewNode {
     isExpandable = false;
 
     @Input() model: FilePath;
-
-    onDoubleClick() {
-    }
 
 }

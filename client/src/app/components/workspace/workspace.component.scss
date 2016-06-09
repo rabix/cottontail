@@ -3,7 +3,12 @@ workspace {
     display: block;
     width: 100%;
     height: 100%;
-    position:relative;
+    position: relative;
+
+    .lm_item_container,
+    .lm_content {
+        height: 100% !important;
+    }
 
     .lm_content {
         overflow-y: scroll;

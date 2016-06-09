@@ -1,9 +1,9 @@
 export type DirectoryChild = DirectoryModel|FileModel;
 
 export class FSItemModel {
-    protected name: string;
-    protected relativePath: string;
-    protected absolutePath: string;
+    protected name:string;
+    protected relativePath:string;
+    protected absolutePath:string;
 
     public getName() {
         return this.name;
@@ -21,17 +21,17 @@ export class FSItemModel {
 
 export class FileModel extends FSItemModel {
 
-    private content: string;
-    private type: string;
+    private content:string;
+    private type:string;
     private modified = false;
 
-    public static createFromObject(data: {
-        name: string,
-        relativePath?: string
-        absolutePath?: string
-        content?: string,
-        type?: string
-    }): FileModel {
+    public static createFromObject(data:{
+        name:string,
+        relativePath?:string
+        absolutePath?:string
+        content?:string,
+        type?:string
+    }):FileModel {
         return Object.assign(new FileModel(), data);
     }
 
@@ -49,34 +49,38 @@ export class FileModel extends FSItemModel {
 }
 
 export class DirectoryModel extends FSItemModel {
-    private isEmpty: boolean;
-    private children: DirectoryChild[] = [];
 
-    public static createFromObject(data: {
-        name: string,
-        relativePath?: string
-        absolutePath?: string
-        isEmpty?: boolean,
-        children?: DirectoryChild[]
-    }): DirectoryModel {
+    public name:string;
+    public isEmpty:boolean;
+    public absolutePath:string;
+    public relativePath:string;
+    public children:DirectoryChild[];
+
+
+    public static createFromObject(data:{
+        name:string,
+        isEmpty?:boolean,
+        absolutePath?:string
+        relativePath?:string
+        children?:DirectoryChild[]
+    }):DirectoryModel {
 
         return Object.assign(new DirectoryModel(), data);
     }
 
-
-    public addChild(child: DirectoryChild): void {
+    public addChild(child:DirectoryChild):void {
         this.children.push(child);
     }
 
-    public setChildren(children: DirectoryChild[]): void {
+    public setChildren(children:DirectoryChild[]):void {
         this.children = children;
     }
 
-    public hasContent(): boolean {
+    public hasContent():boolean {
         return this.isEmpty;
     }
 
-    public getChildren(): DirectoryChild[] {
+    public getChildren():DirectoryChild[] {
         return this.children;
     }
 }

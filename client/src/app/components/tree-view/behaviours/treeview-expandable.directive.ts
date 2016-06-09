@@ -1,6 +1,5 @@
 import {Directive, Output} from "@angular/core";
-import {TreeViewService} from "../tree-view.service";
-import {BehaviorSubject} from "rxjs/Rx";
+import {Subject} from "rxjs/Rx";
 
 @Directive({
     selector: "[treeview-expandable]",
@@ -11,12 +10,11 @@ import {BehaviorSubject} from "rxjs/Rx";
 })
 export class TreeviewExpandableDirective {
 
-    @Output() onExpansionSwitch = new BehaviorSubject<boolean>(false);
-
-    constructor(private treeViewService: TreeViewService) {
-    }
+    @Output() onExpansionSwitch = new Subject<boolean>();
+    private isExpanded = false;
 
     toggleExpansion() {
-        this.onExpansionSwitch.next(!this.onExpansionSwitch.getValue());
+        this.isExpanded = !this.isExpanded;
+        this.onExpansionSwitch.next(this.isExpanded);
     }
 }

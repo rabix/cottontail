@@ -10,8 +10,6 @@ import {Store} from "@ngrx/store";
 import * as STORE_ACTIONS from "../../store/actions";
 import {NgTemplateOutlet} from "@angular/common";
 
-require("./file-tree.component.scss");
-
 @Component({
     selector: "file-tree",
     directives: [TreeViewComponent, BlockLoaderComponent, NgTemplateOutlet],
@@ -19,7 +17,7 @@ require("./file-tree.component.scss");
     template: `
         <block-loader *ngIf="treeIsLoading"></block-loader>
         
-        <tree-view [dataProvider]="dataProviderFn"></tree-view>
+        <tree-view class="deep-unselectable" [dataProvider]="dataProviderFn"></tree-view>
     `
 })
 export class FileTreeComponent {
@@ -41,12 +39,8 @@ export class FileTreeComponent {
         // We need to react to changes on the directory structure and update the tree
         this.storeSubscription = this.fileEffects.directoryContent$.subscribe(this.store);
 
-        // Upon the change in the directory tree, we should update the rendering
-        this.store.select("directoryTree").subscribe(tree => {
-        });
-
         // This is the main user of the directory structure, it should dispatch the first request
-        this.store.dispatch({type: STORE_ACTIONS.DIR_CONTENT_REQUEST, payload: "./"});
+        this.store.dispatch({type: STORE_ACTIONS.REQUEST_DIRECTORY_CONTENT, payload: "./"});
 
     }
 

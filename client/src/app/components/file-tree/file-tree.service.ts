@@ -4,40 +4,44 @@ import {FileNodeComponent} from "./nodes/file-node.component";
 import {FilePath} from "../../services/api/api-response-types";
 import {Injectable, ComponentResolver, ComponentFactory} from "@angular/core";
 import {Subject, BehaviorSubject, Observable} from "rxjs/Rx";
+import {Store} from "@ngrx/store";
+import {DIRECTORY_TREE_TOGGLE_EXPANSION, REQUEST_DIRECTORY_CONTENT} from "../../store/actions";
+import {ObjectHelper} from "../../helpers/object.helper";
+import {StringHelper} from "../../helpers/string.helper";
 
 @Injectable()
 export class FileTreeService {
 
-    public fileOpenStream:Subject<FilePath>;
+    public fileOpenStream: Subject<FilePath>;
 
-    public state:BehaviorSubject<any>;
+    public state: BehaviorSubject<any>;
 
 
-    constructor(private resolver:ComponentResolver) {
+    constructor(private resolver: ComponentResolver,
+                private store: Store) {
 
         this.fileOpenStream = new Subject<FilePath>();
 
         this.state = new BehaviorSubject([]);
 
-        console.time("dataset");
-        let demo = this.generateDemoStructure(5000);
-        console.timeEnd("dataset");
-
-        console.time("push");
-        this.state.next(demo);
-        console.timeEnd("push");
-        //
-        // setInterval(() => {
-        //     this.state.next(this.state.getValue().map(item => {
-        //         return Object.assign({}, item, {
-        //             isModified: Math.random() > 0.5 ? true : false
-        //         });
-        //     }));
-        // }, 1000);
     }
 
-    public generateDemoStructure(size:number) {
-        let struct = [];
+    public toggleExpansion(model) {
+        this.store.dispatch({
+            type: DIRECTORY_TREE_TOGGLE_EXPANSION,
+            payload: model
+        });
+
+        if(!model.isExpanded){ // Means that the state reducer will toggle (expand) it
+            this.store.dispatch({
+                type: REQUEST_DIRECTORY_CONTENT,
+                payload: model.relativePath
+            })
+        }
+    }
+
+    private generateDemoStructure(size: number) {
+        let struct    = [];
         struct.length = size;
 
         function oneOf(...values) {
@@ -46,11 +50,11 @@ export class FileTreeService {
 
 
         for (let i = 0; i < size; i++) {
-            let type = oneOf("directory", "file");
-            let name = type + "-" + Math.round(Math.random() * size * 50);
+            let type       = oneOf("directory", "file");
+            let name       = type + "-" + Math.round(Math.random() * size * 50);
             let isExpanded = oneOf(false);
 
-            let relativePath = name;
+            let relativePath       = name;
             let randomPreviousItem = struct[Math.floor(Math.random() * i)];
             if (randomPreviousItem && randomPreviousItem.type === "directory") {
                 relativePath = `${randomPreviousItem.relativePath}/${name}`;
@@ -60,49 +64,46 @@ export class FileTreeService {
         }
 
         return struct;
-
-
     }
 
     /**
      * Pushes the information about a file to open onto the `fileOpenStream`
      * @param fileInfo
      */
-    public openFile(fileInfo:FilePath):void {
+    public openFile(fileInfo: FilePath): void {
         this.fileOpenStream.next(fileInfo);
     }
 
     public createDataProviderForDirectory(directory = "") {
 
-        return () => this.state.map((rootLevel:any[]) => {
+        // Upon the change in the directory tree, we should update the rendering
+        return () => this.store.select("directoryContentReducer")
+            .map(content => {
+                let path  = StringHelper.dirPathToArray(directory);
+                let level = content;
 
-
-            let level = rootLevel.filter(item => {
-                if (directory === "") {
-                    return item.name === item.relativePath;
-                } else {
-                    return item.relativePath.indexOf(`${directory}/`) === 0
-                }
-            });
-
-            let componentPromises = level.map(item => {
-                let componentType = FileNodeComponent;
-                if (item.type === "directory") {
-                    componentType = DirectoryNodeComponent;
+                if (path.length > 0) {
+                    level = ObjectHelper.findChild(content, path, (i, k) => i.name === k).children;
                 }
 
-                return this.resolver.resolveComponent(componentType)
-                    .then((factory:ComponentFactory<any>) => {
-                        return new DynamicComponentContext(factory, item);
-                    })
-                    .catch((err) => {
-                        throw new Error(`Could not resolve component ${componentType}: ${err}`)
-                    });
-            });
+                let componentPromises = level.map(item => {
+                    let componentType = FileNodeComponent;
+                    if (item.type === "directory") {
+                        componentType = DirectoryNodeComponent;
+                    }
 
-            return Observable.defer(() => Observable.fromPromise(Promise.all(componentPromises)));
+                    return this.resolver.resolveComponent(componentType)
+                        .then((factory: ComponentFactory<any>) => {
+                            return new DynamicComponentContext(factory, item);
+                        })
+                        .catch((err) => {
+                            throw new Error(`Could not resolve component ${componentType}: ${err}`)
+                        });
+                });
 
-        }).concatAll();
+                return Observable.defer(() => Observable.fromPromise(Promise.all(componentPromises)));
+            })
+            .concatAll();
 
     }
 }

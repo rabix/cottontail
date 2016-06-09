@@ -58,7 +58,7 @@ describe("ObjectHelper", () => {
             let target = {foo: "", bar: ""};
             let source = {bar: "baz", goo: "moo"};
 
-            ObjectHelper.addEnumerables(target, source);
+            ObjectHelper.extendEnumerables(target, source);
 
             expect(target).toEqual({foo: "", bar: "baz"});
         });
@@ -73,13 +73,78 @@ describe("ObjectHelper", () => {
             let instance = new TestClass();
             let source   = {first: "foo", second: "bar", third: "baz"};
 
-            ObjectHelper.addEnumerables(instance, source);
+            ObjectHelper.extendEnumerables(instance, source);
             expect((<any>instance).first).toEqual("foo");
             expect((<any>instance).second).toEqual("bar");
             expect((<any>instance).third).toEqual("baz");
 
         });
 
+    });
+
+    describe("findChild()", () => {
+        it("should find a children in an array", () => {
+            let target = [
+                {
+                    name: "first",
+                    children: [
+                        {
+                            name: "second",
+                            children: [
+                                {
+                                    name: "third",
+                                    foo: "bar"
+                                }]
+                        }
+                    ]
+                },
+            ];
+
+            let comparator = (item, key) => item.name === key;
+            let deep       = ObjectHelper.findChild(target, ["first", "second", "third"], comparator);
+            let shallow    = ObjectHelper.findChild(target, ["first"], comparator);
+            let nothing    = ObjectHelper.findChild(target, ["first", "myChild"], comparator);
+
+            expect(deep).toEqual({name: "third", foo: "bar"});
+            expect(shallow).toEqual(target[0]);
+            expect(nothing).toBeUndefined();
+        });
+    });
+
+    describe("extendWithNonExisting()", () => {
+        it("should add non-enumerable properties to an object", () => {
+            let target = {
+                foo: "bar",
+                baz: "gaz"
+            };
+
+            ObjectHelper.extendWithNonExisting(target,
+                {foo: "boo", moo: "goo"},
+                {baz: "traz", haz: "jaz"});
+
+            expect(target).toEqual({foo: "bar", baz: "gaz", moo: "goo", haz: "jaz"});
+        });
+    });
+
+    describe("childrenDiff()", () => {
+        it("should diff array objects", () => {
+            let state = [
+                {name: "first", foo: "bar", see: "mine"},
+                {name: "second", moo: "baz", joel: "software"},
+            ];
+
+            let update = [
+                {name: "boo", moo: "goo"},
+                {name: "first", see: "yours"}
+            ];
+
+            let result = ObjectHelper.childrenDiff(state, update, "name", {foo: "baz"});
+
+            expect(result).toEqual([
+                {name: "boo", moo: "goo", foo: "baz"},
+                {name: "first", see: "yours", foo: "bar"}
+            ]);
+        });
     });
 
 });
