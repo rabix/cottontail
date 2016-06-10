@@ -5,7 +5,7 @@
     "scripts": {
         "test-client": "cd client && npm test",
         "test-server": "cd server && npm test",
-        "build-client": "cd client && npm run build",
+        "build-client": "cd client && npm run build:prod",
         "install-deps": "cd client && npm install && cd ../server && npm install"
     },
     "repository": {
