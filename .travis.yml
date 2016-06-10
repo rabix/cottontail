@@ -4,11 +4,12 @@ node_js:
   - "5"
   - "node"
 script:
-    - npm run test-client
-    - npm run test-server
-    - npm run build-client
+  - npm run test-client
+  - npm run test-server
+  - npm run build-client
 
-sudo: false
+install:
+  - npm run install-deps
 
 branches:
   only:
