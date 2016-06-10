@@ -9,3 +9,8 @@ script:
     - npm run build-client
 
 sudo: false
+
+branches:
+  only:
+    - next
+    - master
