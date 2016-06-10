@@ -11,6 +11,9 @@ script:
 install:
   - npm run install-deps
 
+notifications:
+  email: false
+
 branches:
   only:
     - next
