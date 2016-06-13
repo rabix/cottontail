@@ -71,4 +71,32 @@ export class FileEffects {
                 })
             })
         );
+
+    @Effect()
+    public copyFile$ = this.updates$
+        .whenAction(ACTIONS.COPY_FILE_REQUEST)
+        .map((update: StateUpdate<StateUpdate>) => update.action.payload)
+        .mergeMap(request => {
+            debugger;
+            this.files.createFile(request.path, request.content)
+                .map(content => {
+                    debugger;
+                    return {
+                        type: ACTIONS.NEW_FILE_CREATED,
+                        payload: {
+                            model: content,
+                            path: request.path
+                        }
+                    }
+                })
+                .catch(err => {
+                    return Observable.of({
+                        type: ACTIONS.NEW_FILE_ERROR,
+                        payload: {
+                            error: err,
+                            path: request.path
+                        }
+                    })
+                })
+        });
 }
