@@ -1,0 +1,1 @@
+[![Build Status](https://travis-ci.org/rabix/cottontail.svg?branch=next)](https://travis-ci.org/rabix/cottontail)

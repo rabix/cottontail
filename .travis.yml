@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - "4"
+  - "5"
+  - "node"
+script:
+  - npm run test-client
+  - npm run test-server
+  - npm run build-client
+
+install:
+  - npm run install-deps
+
+notifications:
+  email: false
+
+branches:
+  only:
+    - next
