@@ -1,3 +1,4 @@
+
 'use strict';
 let Boom = require('boom');
 let StoreService = require('../../services/store/store.service');
@@ -61,7 +62,7 @@ exports.updateFile = (request, reply) => {
  */
 exports.createFile = (request, reply) => {
 
-    StoreService.createFile(request.params.file, request.params.content).then((file) => {
+    StoreService.createFile(request.params.file, request.payload.content).then((file) => {
         return reply({
             message: 'File created successfully.',
             content: file

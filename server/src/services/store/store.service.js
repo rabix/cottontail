@@ -306,8 +306,27 @@ module.exports = {
         return deferred.promise;
     },
 
+    _writeFile: function(filePath, content) {
+        let deferred = q.defer();
+
+        fs.writeFile(filePath, content || '', function(err) {
+            if (err) {
+                Error.handle(err);
+                deferred.reject(err);
+            }
+
+            let baseFile = makeBaseFile(filePath);
+            baseFile.content = content || '';
+
+            deferred.resolve(baseFile);
+        });
+
+        return deferred.promise;
+    },
+
     createFile: function(filePath, content) {
         let deferred = q.defer();
+        let _self = this;
 
         if (!filePath) {
             deferred.reject({
@@ -320,17 +339,11 @@ module.exports = {
 
         fs.access(filePath, fs.F_OK, function(err) {
             if (err) {
-                fs.writeFile(filePath, content || '', function(err) {
-                    if (err) {
-                        Error.handle(err);
-                        deferred.reject(err);
-                    }
-
-                    let baseFile = makeBaseFile(filePath);
-                    baseFile.content = content || '';
-
-                    deferred.resolve(baseFile);
-                });
+                _self._writeFile(filePath, content).then(function (success) {
+                    deferred.resolve(success);
+                }, function(err) {
+                    deferred.reject(err);
+                })
 
             } else {
                 deferred.reject({
@@ -349,7 +362,6 @@ module.exports = {
         fs.truncate(fileName, 0, function(err) {
 
             if (err) {
-                Error.handle(err);
                 deferred.reject(err);
             }
 
@@ -370,16 +382,17 @@ module.exports = {
             });
         }
 
+        fileName = path.isAbsolute(fileName) ? fileName : path.resolve(workingDir, fileName);
+
         this.truncate(fileName)
             .then(function() {
-
                 let extension = path.extname(fileName);
                 if (extension === '.yaml') {
                     let yamlText = json2yaml.stringify(JSON.parse(content));
-                    return _self.createFile(fileName, yamlText);
+                    return _self._writeFile(fileName, yamlText);
                 }
 
-                return _self.createFile(fileName, content);
+                return _self._writeFile(fileName, content);
             })
             .then(function() {
                 deferred.resolve(true);
