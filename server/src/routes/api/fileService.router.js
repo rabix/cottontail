@@ -40,7 +40,7 @@ module.exports = [
      */
     {
         method: 'POST',
-        path: '/fs/file/{file}',
+        path: '/fs/file/',
         config : {
             plugins: {
                 'hapi-io': 'createFile'
@@ -56,7 +56,7 @@ module.exports = [
      */
     {
         method: 'PUT',
-        path: '/fs/file/{file}',
+        path: '/fs/file/',
         config : {
             plugins: {
                 'hapi-io': 'updateFile'

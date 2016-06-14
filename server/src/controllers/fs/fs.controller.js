@@ -45,7 +45,7 @@ exports.getDirContents = (request, reply) => {
  */
 exports.updateFile = (request, reply) => {
 
-    StoreService.overwrite(request.params.file, request.payload.content).then((file) => {
+    StoreService.overwrite(request.payload.file, request.payload.content).then((file) => {
         return reply({
             message: 'File updated successfully.',
             content: file
@@ -62,7 +62,7 @@ exports.updateFile = (request, reply) => {
  */
 exports.createFile = (request, reply) => {
 
-    StoreService.createFile(request.params.file, request.payload.content).then((file) => {
+    StoreService.createFile(request.payload.file, request.payload.content).then((file) => {
         return reply({
             message: 'File created successfully.',
             content: file
