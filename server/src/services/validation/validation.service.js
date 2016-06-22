@@ -2,7 +2,7 @@
 const fs = require('fs');
 
 module.exports = {
-    validateWorkingDir: function (pathArgument) {
+    validateWorkingDir: (pathArgument) => {
         if (typeof pathArgument === "undefined") {
             throw new Error('No path argument. You must set the workspace path as an argument.');
         }
@@ -16,5 +16,15 @@ module.exports = {
         if (!stats.isDirectory()) {
             throw new Error('Directory: "' + path + '" not found.');
         }
+    },
+
+    isValidUrl: (url) => {
+        var pattern = new RegExp('^((http|https):\\/\\/)'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,})' +
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+
+        return pattern.test(url);
     }
 };

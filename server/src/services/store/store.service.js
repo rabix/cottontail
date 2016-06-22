@@ -115,7 +115,7 @@ module.exports = {
         this.checkExsits(filePath)
             .then(function() {
                 fs.readFile(filePath, "utf-8", function(err, file) {
-
+                    
                     if (err) {
                         Error.handle(err);
                         deferred.reject(err);
