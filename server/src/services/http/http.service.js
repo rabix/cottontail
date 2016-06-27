@@ -21,7 +21,14 @@ module.exports = {
                     deferred.reject(err);
                 }
 
-                let parsedBody = JSON.parse(body.toString());
+                let parsedBody = '';
+                try {
+                    parsedBody = JSON.parse(body.toString());
+                } catch(err) {
+                    console.log("Response can't be parsed to JSON " + err);
+                    deferred.reject("Response can't be parsed to JSON " + err);
+                }
+
                 deferred.resolve(parsedBody);
             });
         });

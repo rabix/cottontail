@@ -10,12 +10,12 @@ const q = require('q');
 const Rx = require('rxjs/Rx');
 
 module.exports = {
-    getParsedCwlFile: function (filePath) {
+    getParsedCwlFile: function(filePath) {
+        let that = this;
+
         if (ValidationService.isValidUrl(filePath)) {
             return Rx.Observable.fromPromise(HttpService.getRequest(filePath))
                 .mergeMap((jsonContent) => {
-                    let that = this;
-                    
                     let fileName = filePath.split('/').pop();
                     let fileModel = {
                         name: fileName,
@@ -23,44 +23,20 @@ module.exports = {
                         absolutePath: filePath
                     };
 
-                    return Rx.Observable.create(function (observer) {
-                        let cwlFileModel = that.toCwlModel(fileModel);
-                        
-                        that.resolveReferences(cwlFileModel, observer).subscribe((res) => {
-                            observer.next(res);
-                        }, (err) => {
-                            console.log(err);
-                            observer.error(err);
-                        }, () => {
-                            observer.complete();
-                        });
-                    });
+                    return that.getReferences(fileModel);
                 });
-
+            
         } else {
             return Rx.Observable.fromPromise(StoreService.readFile(filePath))
                 .mergeMap((fileModel) => {
-                    let that = this;
-
-                    return Rx.Observable.create(function (observer) {
-                        let cwlFileModel = that.toCwlModel(fileModel);
-
-                        that.resolveReferences(cwlFileModel, observer).subscribe((res) => {
-                            observer.next(res);
-                        }, (err) => {
-                            console.log(err);
-                            observer.error(err);
-                        }, () => {
-                            observer.complete();
-                        });
-                    });
+                    return that.getReferences(fileModel);
                 });
         }
     },
 
-    toCwlModel: function (fileModel) {
+    toCwlModel: function(fileModel) {
         let content = JSON.parse(fileModel.content);
-
+        
         return {
             id: fileModel.name,
             content: content,
@@ -69,12 +45,29 @@ module.exports = {
         };
     },
 
-    /* Be careful if you decide to re-factor this. Make sure the tests are passing. */
-    //todo: actually parse by the spec. This only checks for the $include and $import.
-    resolveReferences: function (cwlFile, recursionObserver) {
+    getReferences: function(fileModel) {
         let that = this;
 
-        return Rx.Observable.create(function(observer) {
+        return Rx.Observable.create((observer) => {
+            let cwlFileModel = that.toCwlModel(fileModel);
+            observer.next(cwlFileModel);
+            
+            that.resolveReferences(cwlFileModel, observer).subscribe((res) => {
+                observer.next(res);
+            }, (err) => {
+                console.log(err);
+                observer.error(err);
+            }, () => {
+                observer.complete();
+            });
+        });
+    },
+
+    /* Be careful if you decide to re-factor this. Make sure the tests are passing. */
+    resolveReferences: function(cwlFile, recursionObserver) {
+        let that = this;
+
+        return Rx.Observable.create((observer) => {
             let traversedProperties = [];
 
             ObjectHelper.iterateAll(cwlFile.content, (propName, value, object) => {
@@ -83,10 +76,15 @@ module.exports = {
                 }
             });
 
+            /* Call complete if the object has no t $import or $include */
+            if(traversedProperties.length === 0 && !_.isUndefined(recursionObserver)) {
+                recursionObserver.complete();
+            }
+            
             Rx.Observable.from(traversedProperties).mergeMap(value => {
                 return RefResolveService.resolveRef(value, cwlFile.path);
             }).subscribe((refFile) => {
-
+                
                 let parsedRefFile = that.toCwlModel(refFile);
                 cwlFile.contentReferences.push(parsedRefFile);
                 observer.next(parsedRefFile);
@@ -99,9 +97,9 @@ module.exports = {
                     if(cwlFile.contentReferences.length === traversedProperties.length && !_.isUndefined(recursionObserver)) {
                         recursionObserver.complete()
                     }
-                });
+                }, err => console.log(err));
 
-            }, function(err) {
+            }, (err) => {
                 console.log(err);
                 recursionObserver.error(err);
             });

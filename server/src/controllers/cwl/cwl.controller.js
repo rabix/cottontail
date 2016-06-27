@@ -8,13 +8,15 @@ let ErrorService = require('../../services/errors/errors.service');
  * @param request
  * @param reply
  */
-exports.getFile = (request, reply) => {
+exports.getParsedCwlFile = (request, reply) => {
     let file = request.query.file;
 
-    //TODO(mate): test this
-    CwlService.getParsedCwlFile(file).subscribe((res) => {}, (err) => {
+    let completeCwlFile = null;
+    CwlService.getParsedCwlFile(file).subscribe((res) => {
+        completeCwlFile = res;
+    }, (err) => {
         console.log(err)
-    }, (completeCwlFile) => {
+    }, () => {
         return reply({
             message: 'File parsed successfully',
             content: completeCwlFile
