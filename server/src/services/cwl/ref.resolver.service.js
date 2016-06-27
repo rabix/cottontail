@@ -5,6 +5,7 @@ const FileHelper = require('../../helper/file.helper');
 const StoreService = require('../../services/store/store.service');
 const HttpService = require('../../services/http/http.service');
 
+const path = require('path');
 const Rx = require('rxjs/Rx');
 
 let RefResolverService = {
@@ -35,7 +36,7 @@ let RefResolverService = {
 
     resolveRef: function(referenceString, parentPath) {
         let that = this;
-        let isRelative = FileHelper.isRelativePath(referenceString);
+        let isRelative = !path.isAbsolute(referenceString);
 
         //If its a URL
         if (ValidationService.isValidUrl(referenceString) && !isRelative) {
@@ -48,13 +49,7 @@ let RefResolverService = {
         } else {
             //If its a file
             return Rx.Observable.create((observer) => {
-
-                let absoluteRefPath = '';
-                if (isRelative) {
-                    absoluteRefPath = FileHelper.relativeToAbsolutePath(referenceString, parentPath);
-                } else {
-                    absoluteRefPath = referenceString;
-                }
+                let absoluteRefPath = path.resolve(parentPath, referenceString);
 
                 return StoreService.readFile(absoluteRefPath).then((data) => {
                     let result = this.createCwlRefFile({

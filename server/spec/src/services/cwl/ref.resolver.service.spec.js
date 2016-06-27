@@ -46,25 +46,21 @@ describe("RefResolverService", () => {
 
 
             RefResolverService.resolveRef("./test.json", "https://stackoverflow.com/data/")
-                .subscribe((res) => {
-                    expect(RefResolverService.resolveUrlReference).toHaveBeenCalled();
+                .subscribe(() => {
+                    expect(RefResolverService.resolveUrlReference)
+                        .toHaveBeenCalledWith("./test.json", "https://stackoverflow.com/data/test.json");
                 });
 
             RefResolverService.resolveRef("https://stackoverflow.com/data/test.json", "https://google.com/")
-                .subscribe((res) => {
-                    expect(RefResolverService.resolveUrlReference).toHaveBeenCalled();
+                .subscribe(() => {
+                    expect(RefResolverService.resolveUrlReference)
+                        .toHaveBeenCalledWith("./test.json", "https://stackoverflow.com/data/test.json");
                 });
         });
 
 
         it("should return a file from the file system if the reference is NOT a URL", () => {
-
-            let expectedFile = {
-                name: 'mock.yml',
-                absolutePath: '/Users/mate/testws/test.json',
-                content: '{ "content": "mock" }'
-            };
-
+            
             let storeServiceStub = {
                 readFile: function(absolutePath) {
                     return new Promise((resolve) => {
@@ -81,12 +77,24 @@ describe("RefResolverService", () => {
                 '../../services/store/store.service': storeServiceStub
             });
 
-            refResolverService.resolveRef("./test.json", "/Users/mate/testws/").subscribe((res) => {
-                expect(_.isEqual(res, expectedFile)).toBe(true);
+            refResolverService.resolveRef("../test.json", "/Users/mate/testws/").subscribe((res) => {
+                let expectedFile = {
+                    name: 'mock.yml',
+                    absolutePath: '/Users/mate/test.json',
+                    content: '{ "content": "mock" }'
+                };
+
+                expect(res).toEqual(expectedFile);
             });
 
-            refResolverService.resolveRef("/Users/mate/testws/test.json", "/mock").subscribe((res) => {
-                expect(_.isEqual(res, expectedFile)).toBe(true);
+            refResolverService.resolveRef("/Users/mate/testws/test2.json", "/mock").subscribe((res) => {
+                let expectedFile = {
+                    name: 'mock.yml',
+                    absolutePath: '/Users/mate/testws/test2.json',
+                    content: '{ "content": "mock" }'
+                };
+
+                expect(res).toEqual(expectedFile);
             });
         });
     });

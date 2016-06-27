@@ -9,6 +9,7 @@ module.exports = {
         return (firstTwoCharacters === './' || firstThreeCharacters === '../');
     },
     
+    //TODO(mate): move this somewhere else, it's not just for files
     relativeToAbsolutePath: (relativePath, basePath) => {
         let stack = basePath.split("/"),
             parts = relativePath.split("/");
