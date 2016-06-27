@@ -1,22 +1,31 @@
 'use strict';
 const Wreck = require('wreck');
+const q = require('q');
 
 module.exports = {
     getRequest: function(url) {
-        return Wreck.request("GET", url, null, (err, res) => {
+        let deferred = q.defer();
+
+        Wreck.request("get", url, null, function(err, res) {
             if (err) {
-                throw err;
+                console.log(err);
+                deferred.reject(err);
             }
 
-            /* TODO: see if there is a cleaner way for this
-            The response is a Buffer stream which
-            with need to read and turn into a json */
+            /*
+             The response is a Buffer stream which
+             with need to read and turn into a json */
             Wreck.read(res, null, function (err, body) {
                 if (err) {
-                    throw err;
+                    console.log(err);
+                    deferred.reject(err);
                 }
-                return JSON.parse(body.toString());
+
+                let parsedBody = JSON.parse(body.toString());
+                deferred.resolve(parsedBody);
             });
         });
+
+        return deferred.promise;
     }
 };

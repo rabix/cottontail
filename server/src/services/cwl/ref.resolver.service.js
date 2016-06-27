@@ -51,7 +51,7 @@ let RefResolverService = {
 
                 let absoluteRefPath = '';
                 if (isRelative) {
-                    absoluteRefPath = FileHelper.relativeToAbsolutePath(referenceString, parentPath)
+                    absoluteRefPath = FileHelper.relativeToAbsolutePath(referenceString, parentPath);
                 } else {
                     absoluteRefPath = referenceString;
                 }
