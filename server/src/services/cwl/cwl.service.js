@@ -76,7 +76,7 @@ module.exports = {
                 }
             });
 
-            /* Call complete if the object has no t $import or $include */
+            /* Call complete if the object has no $import or $include */
             if(traversedProperties.length === 0 && !_.isUndefined(recursionObserver)) {
                 recursionObserver.complete();
             }
