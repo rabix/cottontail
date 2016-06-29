@@ -1,21 +1,27 @@
 {
-    "name": "cottontail",
-    "version": "0.1.0",
-    "description": "",
-    "scripts": {
-        "test-client": "cd client && npm test",
-        "test-server": "cd server && npm test",
-        "build-client": "cd client && npm run build:prod",
-        "install-deps": "cd client && npm install && cd ../server && npm install"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/rabix/cottontail.git"
-    },
-    "author": "",
-    "license": "Apache-2.0",
-    "bugs": {
-        "url": "https://github.com/rabix/cottontail/issues"
-    },
-    "homepage": "https://github.com/rabix/cottontail#readme"
+  "name": "cottontail",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "test-client": "cd client && npm test",
+    "test-server": "cd server && npm test",
+    "build-client": "cd client && npm run build:prod",
+    "install-deps": "cd client && npm install && cd ../server && npm install",
+    "start:dev:client":"cd client && npm start",
+    "start:dev:server": "cd server && npm start",
+    "start:dev": "concurrently 'npm run start:dev:client' 'npm run start:dev:server'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rabix/cottontail.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/rabix/cottontail/issues"
+  },
+  "homepage": "https://github.com/rabix/cottontail#readme",
+  "devDependencies": {
+    "concurrently": "^2.1.0"
+  }
 }
