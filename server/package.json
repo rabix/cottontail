@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "./node_modules/.bin/jasmine"
+    "test": "./node_modules/.bin/jasmine",
+    "start": "node app.js"
   },
   "author": "Mate Balo Bordas",
   "license": "ISC",
