@@ -1,14 +1,15 @@
 'use strict';
-const fs = require('fs');
-const yaml = require('yaml-js');
-const json2yaml = require('json2yaml');
-const path = require('path');
-const q = require('q');
-const mkdirp = require('mkdirp');
+const async = require('async');
 const dir = require('node-dir');
 const Error = require('../errors/errors.service');
+const fs = require('fs');
+const fsExtra = require('fs-extra');
+const json2yaml = require('json2yaml');
+const mkdirp = require('mkdirp');
+const path = require('path');
+const q = require('q');
 const readline = require('readline');
-const async = require('async');
+const yaml = require('yaml-js');
 
 const config = require('../../config/environment');
 let workingDir = config.store.path;
@@ -77,13 +78,13 @@ function parseDirContents(file) {
 
 module.exports = {
 
-    checkExsits: function(filePath) {
+    checkExsits: function (filePath) {
         let deferred = q.defer();
 
         if (typeof filePath === 'string') {
             filePath = path.isAbsolute(filePath) ? filePath : path.resolve(workingDir, filePath);
 
-            fs.exists(filePath, function(exists) {
+            fs.exists(filePath, function (exists) {
 
                 return exists ? deferred.resolve(exists) : deferred.reject({
                     message: 'File doesn\'t exist.',
@@ -100,7 +101,7 @@ module.exports = {
         return deferred.promise;
     },
 
-    readFile: function(filePath) {
+    readFile: function (filePath) {
         let deferred = q.defer();
 
         if (!filePath) {
@@ -113,9 +114,9 @@ module.exports = {
         filePath = path.isAbsolute(filePath) ? filePath : path.resolve(workingDir, filePath);
 
         this.checkExsits(filePath)
-            .then(function() {
-                fs.readFile(filePath, "utf-8", function(err, file) {
-                    
+            .then(function () {
+                fs.readFile(filePath, "utf-8", function (err, file) {
+
                     if (err) {
                         Error.handle(err);
                         deferred.reject(err);
@@ -140,25 +141,25 @@ module.exports = {
                     deferred.resolve(baseFile);
                 });
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 deferred.reject(err)
             });
 
         return deferred.promise;
     },
 
-    readWorkspace: function(dirPath) {
+    readWorkspace: function (dirPath) {
         let deferred = q.defer();
 
         this.checkExsits(dirPath)
-            .then(function() {
-                dir.files(dirPath, function(err, files) {
+            .then(function () {
+                dir.files(dirPath, function (err, files) {
                     if (err) {
                         Error.handle(err);
                         return deferred.reject(reason);
                     }
 
-                    files = files.map(function(file) {
+                    files = files.map(function (file) {
 
                         return makeBaseFile(file);
                     });
@@ -169,7 +170,7 @@ module.exports = {
                     });
                 });
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 deferred.reject(err)
             });
 
@@ -177,15 +178,15 @@ module.exports = {
 
     },
 
-    readDir: function(relativePath) {
+    readDir: function (relativePath) {
         let deferred = q.defer();
         relativePath = relativePath || '';
 
         let resolvedPath = path.resolve(workingDir, relativePath);
 
         this.checkExsits(resolvedPath)
-            .then(function() {
-                fs.readdir(resolvedPath, function(err, contents) {
+            .then(function () {
+                fs.readdir(resolvedPath, function (err, contents) {
                     if (err) {
                         Error.handle(err);
                         return deferred.reject(err);
@@ -202,26 +203,26 @@ module.exports = {
                     });
                 });
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 deferred.reject(err);
             });
 
         return deferred.promise;
     },
 
-    readCWLFiles: function(dirPath) {
+    readCWLFiles: function (dirPath) {
         let deferred = q.defer();
 
         this.checkExsits(dirPath)
-            .then(function() {
-                dir.files(dirPath, function(err, files) {
+            .then(function () {
+                dir.files(dirPath, function (err, files) {
 
                     if (err) {
                         Error.handle(err);
                         return deferred.reject(err);
                     }
 
-                    async.map(files, function(file, callback) {
+                    async.map(files, function (file, callback) {
 
                         if (path.extname(file) !== '.json') {
                             return callback(null, null);
@@ -233,7 +234,7 @@ module.exports = {
 
                         let found = false;
 
-                        lineReader.on('line', function(line) {
+                        lineReader.on('line', function (line) {
                             let baseFile;
 
                             if (/^(\s{0,4}|\t?)("class": "Workflow")/.test(line)) {
@@ -250,20 +251,20 @@ module.exports = {
                             }
                         });
 
-                        lineReader.on('close', function() {
+                        lineReader.on('close', function () {
                             if (!found) {
                                 return callback(null, null);
                             }
                         });
 
-                    }, function(err, results) {
+                    }, function (err, results) {
 
                         if (err) {
                             Error.handle(err);
                             deferred.reject(err);
                         }
 
-                        let filteredResults = results.filter(function(file) {
+                        let filteredResults = results.filter(function (file) {
                             return file !== null;
                         });
 
@@ -275,18 +276,18 @@ module.exports = {
         return deferred.promise;
     },
 
-    mkdir: function(path) {
+    mkdir: function (path) {
         let deferred = q.defer();
 
         if (typeof path === 'string') {
 
             this.checkExsits(path)
-                .then(function() {
+                .then(function () {
                     deferred.reject('Workspace already exists.');
-                }, function() {
+                }, function () {
 
                     //doesnt exist
-                    mkdirp(path, function(err) {
+                    mkdirp(path, function (err) {
                         if (err) {
                             Error.handle(err);
 
@@ -306,10 +307,10 @@ module.exports = {
         return deferred.promise;
     },
 
-    _writeFile: function(filePath, content) {
+    _writeFile: function (filePath, content) {
         let deferred = q.defer();
 
-        fs.writeFile(filePath, content || '', function(err) {
+        fs.writeFile(filePath, content || '', function (err) {
             if (err) {
                 Error.handle(err);
                 deferred.reject(err);
@@ -324,7 +325,7 @@ module.exports = {
         return deferred.promise;
     },
 
-    createFile: function(filePath, content) {
+    createFile: function (filePath, content) {
         let deferred = q.defer();
         let _self = this;
 
@@ -337,11 +338,11 @@ module.exports = {
 
         filePath = path.isAbsolute(filePath) ? filePath : path.resolve(workingDir, filePath);
 
-        fs.access(filePath, fs.F_OK, function(err) {
+        fs.access(filePath, fs.F_OK, function (err) {
             if (err) {
                 _self._writeFile(filePath, content).then(function (success) {
                     deferred.resolve(success);
-                }, function(err) {
+                }, function (err) {
                     deferred.reject(err);
                 })
 
@@ -356,10 +357,31 @@ module.exports = {
         return deferred.promise;
     },
 
-    truncate: function(fileName) {
+    copyFile: (source, destination) => {
+        const deferred = q.defer();
+        if (!source || !destination) {
+            deferred.reject({
+                status: 400,
+                message: "You need to specify both source and destination."
+            });
+        }
+
+        fsExtra.copy(source, destination, (err) => {
+            if (err) {
+                return deferred.reject({status: 400, message: err});
+            }
+
+            deferred.resolve(makeBaseFile(destination));
+
+        });
+
+        return deferred.promise;
+    },
+
+    truncate: function (fileName) {
         let deferred = q.defer();
 
-        fs.truncate(fileName, 0, function(err) {
+        fs.truncate(fileName, 0, function (err) {
 
             if (err) {
                 deferred.reject(err);
@@ -371,7 +393,7 @@ module.exports = {
         return deferred.promise;
     },
 
-    overwrite: function(fileName, content) {
+    overwrite: function (fileName, content) {
         let deferred = q.defer();
         let _self = this;
 
@@ -385,7 +407,7 @@ module.exports = {
         fileName = path.isAbsolute(fileName) ? fileName : path.resolve(workingDir, fileName);
 
         this.truncate(fileName)
-            .then(function() {
+            .then(function () {
                 let extension = path.extname(fileName);
                 if (extension === '.yaml') {
                     let yamlText = json2yaml.stringify(JSON.parse(content));
@@ -394,10 +416,10 @@ module.exports = {
 
                 return _self._writeFile(fileName, content);
             })
-            .then(function() {
+            .then(function () {
                 deferred.resolve(true);
             })
-            .catch(function(err) {
+            .catch(function (err) {
                 deferred.reject(err);
             });
 

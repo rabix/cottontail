@@ -1,4 +1,3 @@
-
 'use strict';
 let Boom = require('boom');
 let StoreService = require('../../services/store/store.service');
@@ -16,7 +15,7 @@ exports.getFile = (request, reply) => {
             message: 'Read file successfully',
             content: data
         });
-    }).catch(function(err) {
+    }).catch(function (err) {
         return handleError(reply, err);
     });
 };
@@ -33,7 +32,7 @@ exports.getDirContents = (request, reply) => {
             message: 'Read directory successfully',
             content: content
         });
-    }).catch(function(err) {
+    }).catch(function (err) {
         return handleError(reply, err);
     });
 };
@@ -50,7 +49,7 @@ exports.updateFile = (request, reply) => {
             message: 'File updated successfully.',
             content: file
         });
-    }).catch(function(err) {
+    }).catch(function (err) {
         return handleError(reply, err);
     });
 };
@@ -68,9 +67,14 @@ exports.createFile = (request, reply) => {
             content: file
         });
 
-    }).catch(function(err) {
+    }).catch(function (err) {
         return handleError(reply, err);
     });
+};
+
+exports.copyFile = (request, reply) => {
+    const {source, destination} = request.payload;
+    StoreService.copyFile(source, destination).then(file => reply(file));
 };
 
 exports.checkIfFileExists = (request, reply) => {
@@ -79,7 +83,7 @@ exports.checkIfFileExists = (request, reply) => {
             message: 'File or Directory exists.',
             content: result
         });
-    }).catch(function(err) {
+    }).catch(function (err) {
         return handleError(reply, err);
     })
 

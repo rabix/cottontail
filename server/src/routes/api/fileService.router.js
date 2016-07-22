@@ -12,7 +12,7 @@ module.exports = [
             plugins: {
                 'hapi-io': 'getDirContents'
             },
-            handler: function(request, response) {
+            handler: function (request, response) {
                 fsController.getDirContents(request, response);
             }
         }
@@ -25,11 +25,11 @@ module.exports = [
     {
         method: 'GET',
         path: '/fs/file',
-        config : {
+        config: {
             plugins: {
                 'hapi-io': 'getFile'
             },
-            handler: function(request, reply) {
+            handler: function (request, reply) {
                 fsController.getFile(request, reply);
             }
         }
@@ -41,13 +41,24 @@ module.exports = [
     {
         method: 'POST',
         path: '/fs/file/',
-        config : {
+        config: {
             plugins: {
                 'hapi-io': 'createFile'
             },
-            handler: function(request, reply) {
+            handler: function (request, reply) {
                 fsController.createFile(request, reply);
             }
+        }
+    },
+    /**
+     * Copy File
+     */
+    {
+        method: 'POST',
+        path: '/fs/file',
+        config: {
+            plugins: {'hapi-io': 'copyFile'},
+            handler: (request, reply) => fsController.copyFile(request, reply)
         }
     },
 
@@ -57,11 +68,11 @@ module.exports = [
     {
         method: 'PUT',
         path: '/fs/file/',
-        config : {
+        config: {
             plugins: {
                 'hapi-io': 'updateFile'
             },
-            handler: function(request, reply) {
+            handler: function (request, reply) {
                 fsController.updateFile(request, reply);
             }
         }
@@ -77,7 +88,7 @@ module.exports = [
             plugins: {
                 'hapi-io': 'fileExists'
             },
-            handler: function(request, reply) {
+            handler: function (request, reply) {
                 fsController.checkIfFileExists(request, reply);
             }
         }
