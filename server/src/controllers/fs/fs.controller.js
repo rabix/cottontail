@@ -61,7 +61,7 @@ exports.updateFile = (request, reply) => {
  */
 exports.createFile = (request, reply) => {
 
-    StoreService.createFile(request.payload).then((file) => {
+    StoreService.createFile(request.payload.file, request.payload.content).then((file) => {
         return reply({
             message: 'File created successfully.',
             content: file
