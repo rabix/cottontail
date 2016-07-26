@@ -95,7 +95,7 @@ describe('storeService', function() {
     describe('createFile', function() {
 
         it('should not create a file over an existing one', function(done) {
-            storeService.createFile('spec/test-data/test.txt')
+            storeService.createFile({path: 'spec/test-data/test.txt'})
                 .then(function(result) {
                     expect(result).toBeUndefined();
                 })
