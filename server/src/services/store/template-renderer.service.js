@@ -1,7 +1,7 @@
 "use strict";
 const FS = require("fs");
 const Q = require("q");
-const Handlebars = require("Handlebars");
+const Handlebars = require("handlebars");
 
 const templateDir = __dirname + "/templates";
 

@@ -327,7 +327,9 @@ module.exports = {
     },
 
     createFile: function (options) {
-        let {path: filePath, template, content = ''} = options;
+        let filePath = options.path;
+        const template = options.template;
+        const content = options.content || '';
         const deferred = q.defer();
         const _self = this;
 
