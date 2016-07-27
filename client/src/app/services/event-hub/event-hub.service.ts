@@ -1,4 +1,3 @@
-import {EventHubAction} from "../../action-events/index";
 import {Injectable} from "@angular/core";
 import {Subject, Observable} from "rxjs/Rx";
 
@@ -19,6 +18,10 @@ export class AppErrorEvent {
     data: any;
 }
 
+interface SourceInterceptor<T> {
+    (source: any): Observable<T>;
+}
+
 @Injectable()
 export class EventHubService {
 
@@ -37,7 +40,8 @@ export class EventHubService {
             getResponse: () => {
                 return this.responses
                     .filter(ev => ev.action === action)
-                    .flatMap(ev => ev.error ? Observable.throw(ev.error) : Observable.of(ev.response));
+                    .flatMap(ev => ev.error ? Observable.throw(ev.error) : Observable.of(ev.response))
+                    .first();
             }
         }
     }
@@ -46,11 +50,11 @@ export class EventHubService {
         return this.eventStream.asObservable();
     }
 
-    public onValueFrom(actionType: EventHubAction): Observable<any> {
+    public onValueFrom(actionType: Function): Observable<any> {
         return this.on(actionType).map(ev => ev.payload);
     }
 
-    public on(actionType: EventHubAction): Observable<any> {
+    public on(actionType: Function): Observable<any> {
         return this.eventStream.filter(ev => {
             return ev instanceof actionType;
         });
@@ -60,8 +64,8 @@ export class EventHubService {
         this.responses.next(ev);
     }
 
-    public intercept(action) {
-        return (source) => {
+    public intercept<T>(action): SourceInterceptor<T>{
+        return source => {
             return source.catch(error => {
                 this.respond({action, error});
                 return Observable.empty();

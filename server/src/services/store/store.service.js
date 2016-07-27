@@ -10,6 +10,7 @@ const path = require('path');
 const q = require('q');
 const readline = require('readline');
 const yaml = require('yaml-js');
+const templateRenderer = require("./template-renderer.service");
 
 const config = require('../../config/environment');
 let workingDir = config.store.path;
@@ -325,12 +326,15 @@ module.exports = {
         return deferred.promise;
     },
 
-    createFile: function (filePath, content) {
-        let deferred = q.defer();
-        let _self = this;
+    createFile: function (options) {
+        let filePath = options.path;
+        const template = options.template;
+        const content = options.content || '';
+        const deferred = q.defer();
+        const _self = this;
 
         if (!filePath) {
-            deferred.reject({
+            return deferred.reject({
                 status: 400,
                 message: 'File path not specified'
             });
@@ -338,20 +342,27 @@ module.exports = {
 
         filePath = path.isAbsolute(filePath) ? filePath : path.resolve(workingDir, filePath);
 
-        fs.access(filePath, fs.F_OK, function (err) {
-            if (err) {
-                _self._writeFile(filePath, content).then(function (success) {
-                    deferred.resolve(success);
-                }, function (err) {
-                    deferred.reject(err);
-                })
-
-            } else {
-                deferred.reject({
+        fs.access(filePath, fs.F_OK, fileDoesntExist => {
+            if (!fileDoesntExist) {
+                return deferred.reject({
                     message: 'Cannot overwrite existing file',
                     status: 403
                 });
             }
+
+            const writeFn = (filePath, content) => _self._writeFile(filePath, content).then(
+                success => deferred.resolve(success),
+                err => deferred.reject({message: err, status: 500}));
+
+
+            if (template) {
+                return templateRenderer.render(template.id, template.params || {}).then(
+                    data => writeFn(filePath, data),
+                    err => writeFn(filePath, content)
+                );
+            }
+
+            writeFn(filePath, content);
         });
 
         return deferred.promise;
