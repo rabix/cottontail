@@ -2,8 +2,7 @@
 const async = require('async');
 const dir = require('node-dir');
 const Error = require('../errors/errors.service');
-const fs = require('fs');
-const fsExtra = require('fs-extra');
+const fs = require('fs-extra');
 const json2yaml = require('json2yaml');
 const mkdirp = require('mkdirp');
 const path = require('path');
@@ -388,6 +387,15 @@ module.exports = {
 
         return deferred.promise;
     },
+
+    deleteFile: path => new Promise((resolve, reject) => {
+        fs.remove(path, err => {
+            if (err) {
+                return reject(err);
+            }
+            resolve();
+        });
+    }),
 
     truncate: function (fileName) {
         let deferred = q.defer();

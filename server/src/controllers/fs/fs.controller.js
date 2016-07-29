@@ -77,6 +77,13 @@ exports.copyFile = (request, reply) => {
     StoreService.copyFile(source, destination).then(file => reply(file));
 };
 
+exports.deleteFile = (request, reply) => {
+    StoreService.deleteFile(request.payload.path).then(
+        res => reply(res),
+        error => handleError(reply, {error})
+    ).catch(error => handleError(reply, error));
+};
+
 exports.checkIfFileExists = (request, reply) => {
     StoreService.checkExsits(request.query.path).then(result => {
         return reply({
