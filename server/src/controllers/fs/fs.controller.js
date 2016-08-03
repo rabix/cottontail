@@ -61,7 +61,7 @@ exports.updateFile = (request, reply) => {
  */
 exports.createFile = (request, reply) => {
 
-    StoreService.createFile(request.payload.file, request.payload.content).then((file) => {
+    StoreService.createFile(request.payload).then((file) => {
         return reply({
             message: 'File created successfully.',
             content: file
@@ -75,6 +75,13 @@ exports.createFile = (request, reply) => {
 exports.copyFile = (request, reply) => {
     const {source, destination} = request.payload;
     StoreService.copyFile(source, destination).then(file => reply(file));
+};
+
+exports.deleteFile = (request, reply) => {
+    StoreService.deleteFile(request.payload.path).then(
+        res => reply(res),
+        error => handleError(reply, {error})
+    ).catch(error => handleError(reply, error));
 };
 
 exports.checkIfFileExists = (request, reply) => {

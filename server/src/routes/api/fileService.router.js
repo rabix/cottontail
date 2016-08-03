@@ -58,7 +58,19 @@ module.exports = [
         path: '/fs/file',
         config: {
             plugins: {'hapi-io': 'copyFile'},
-            handler: (request, reply) => fsController.copyFile(request, reply)
+            handler: fsController.copyFile
+        }
+    },
+
+    /**
+     * Remove a file
+     */
+    {
+        method: 'DELETE',
+        path: '/fs/file',
+        config: {
+            plugins: {'hapi-io': 'deleteFile'},
+            handler: fsController.deleteFile
         }
     },
 
