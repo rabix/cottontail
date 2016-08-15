@@ -376,7 +376,7 @@ module.exports = {
             });
         }
 
-        fsExtra.copy(source, destination, (err) => {
+        fs.copy(source, destination, (err) => {
             if (err) {
                 return deferred.reject({status: 400, message: err});
             }
