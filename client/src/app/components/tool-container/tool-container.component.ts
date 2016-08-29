@@ -11,13 +11,13 @@ import {ToolHeaderComponent} from "./tool-header/tool-header.component";
 import {CommandLineComponent} from "../clt-editor/commandline/commandline.component";
 import {InputInspectorSidebarComponent} from "../sidebar/object-inpsector/input-inspector-sidebar.component";
 import {ExpressionEditorSidebarComponent} from "../sidebar/expression-editor/expression-editor-sidebar.component";
+import {ViewModeService} from "./services/view-mode.service";
 
 require("./tool-container.component.scss");
 
-export type ViewMode = "gui" | "json";
-
 @Component({
     selector: "tool-container",
+    providers: [ViewModeService],
     directives: [
         CodeEditorComponent,
         CltEditorComponent,
@@ -31,8 +31,12 @@ export type ViewMode = "gui" | "json";
         ExpressionEditorSidebarComponent
     ],
     template: `
-        <div class="tool-container-component">
-            <tool-header class="tool-header" [viewMode]="viewMode" (viewModeChanged)="setViewMode($event)"></tool-header>
+        <block-loader *ngIf="!isLoaded"></block-loader>
+        
+        <div class="tool-container-component" *ngIf="isLoaded">
+            <tool-header class="tool-header" 
+                        [file]="file">
+            </tool-header>
         
             <div class="scroll-content">
                 <div class="main-content">
@@ -51,8 +55,8 @@ export type ViewMode = "gui" | "json";
     `
 })
 export class ToolContainerComponent implements OnInit, DynamicState {
-    /** Default view mode. TODO: change type */
-    private viewMode: ViewMode = "gui";
+    /** Default view mode. */
+    private viewMode: string;
 
     /** File that we will pass to both the gui and JSON editor*/
     private file: FileModel;
@@ -63,8 +67,18 @@ export class ToolContainerComponent implements OnInit, DynamicState {
     /** List of subscriptions that should be disposed when destroying this component */
     private subs: Subscription[];
 
-    constructor(private fileRegistry: FileRegistry) {
+    /** Flag that determines if the spinner should be shown */
+    private isLoaded: boolean;
+
+    constructor(private fileRegistry: FileRegistry,
+                private viewModeService: ViewModeService) {
         this.subs = [];
+        this.isLoaded = false;
+        
+        this.viewModeService.setViewMode("json");
+        this.viewModeService.viewMode.subscribe(viewMode => {
+           this.viewMode = viewMode; 
+        });
     }
 
     ngOnInit(): void {
@@ -74,11 +88,8 @@ export class ToolContainerComponent implements OnInit, DynamicState {
         // bring our own file up to date
         this.subs.push(fileStream.subscribe(file => {
             this.file = file;
+            this.isLoaded = true;
         }));
-    }
-
-    private setViewMode(viewMode): void {
-        this.viewMode = viewMode;
     }
 
     public setState(state: {fileInfo}): void {
