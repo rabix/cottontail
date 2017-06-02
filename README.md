@@ -1,3 +1,5 @@
+**This project is deprecated. Please check out [rabix/cottontail-frontend](https://github.com/rabix/cottontail-frontend) instead.**
+
 # Cottontail
 
 ## Installation
